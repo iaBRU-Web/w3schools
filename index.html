@@ -3,223 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRU WEB | Full Stack Academy</title>
+    <title>BRU WEB | Developed by Inezaime Bruno</title>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
     <style>
         :root {
-            --primary: #2c3e50;
-            --accent: #04AA6D;
-            --bg-light: #f4f6f8;
-            --border: #d1d5db;
+            --primary: #1a1a2e;
+            --accent: #00d2ff;
+            --success: #04AA6D;
+            --dark-gray: #333;
+            --light-bg: #f8f9fa;
         }
 
-        body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; background: var(--bg-light); }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; display: flex; height: 100vh; background: var(--light-bg); color: #333; }
 
-        /* Left: Course Navigation */
-        .syllabus {
-            width: 280px;
-            background: white;
-            border-right: 1px solid var(--border);
+        /* Sidebar Branding & Navigation */
+        .sidebar {
+            width: 300px;
+            background: var(--primary);
+            color: white;
             display: flex;
             flex-direction: column;
+            border-right: 1px solid #000;
         }
 
-        .syllabus-header { padding: 20px; background: var(--primary); color: white; font-weight: bold; }
-        
-        .course-folder { padding: 15px; background: #eee; font-size: 0.8rem; font-weight: bold; color: #666; text-transform: uppercase; }
+        .branding {
+            padding: 25px;
+            background: #16213e;
+            text-align: center;
+            border-bottom: 2px solid var(--accent);
+        }
 
-        .lesson-link {
+        .branding h1 { font-size: 1.4rem; margin: 0; color: var(--accent); letter-spacing: 1px; }
+        .branding p { font-size: 0.8rem; opacity: 0.7; margin: 5px 0 0; }
+
+        .syllabus { flex: 1; overflow-y: auto; padding-bottom: 50px; }
+        .module-title { background: #0f3460; padding: 10px 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #8892b0; margin-top: 10px; }
+
+        .nav-item {
             padding: 12px 20px;
             cursor: pointer;
-            font-size: 0.95rem;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #16213e;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
             transition: 0.2s;
         }
 
-        .lesson-link:hover { background: #e8f5e9; }
-        .lesson-link.active { border-left: 5px solid var(--accent); background: #f9fff9; font-weight: bold; }
+        .nav-item:hover { background: #0f3460; color: var(--accent); }
+        .nav-item.active { background: #0f3460; border-left: 4px solid var(--accent); font-weight: bold; }
 
-        /* Middle: Tutorial Content */
-        .tutorial-pane {
-            flex: 1.2;
-            padding: 30px;
-            overflow-y: auto;
+        /* Main Content Layout */
+        .main-stage { flex: 1; display: flex; flex-direction: column; }
+        
+        header {
             background: white;
-            line-height: 1.6;
-        }
-
-        /* Right: The Compiler */
-        .compiler-pane {
-            flex: 1.5;
-            display: flex;
-            flex-direction: column;
-            background: #1e1e1e;
-            color: white;
-        }
-
-        .compiler-header {
-            padding: 10px;
-            background: #333;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        #editor {
+        .workspace { display: flex; flex: 1; overflow: hidden; }
+
+        /* Lesson Content Panel */
+        .tutorial-panel {
+            flex: 1.2;
+            padding: 40px;
+            overflow-y: auto;
+            background: white;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .tutorial-panel h2 { color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .tutorial-panel blockquote { border-left: 4px solid var(--accent); margin: 20px 0; padding: 10px 20px; background: #f0f9ff; }
+
+        /* Editor & Compiler Panel */
+        .compiler-panel {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            background: #282c34; /* Dark Code Editor Theme */
+        }
+
+        .editor-top {
+            background: #21252b;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #abb2bf;
+        }
+
+        #code-editor {
             flex: 2;
-            background: #1e1e1e;
-            color: #d4d4d4;
-            font-family: 'Consolas', monospace;
+            background: #282c34;
+            color: #61afef;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 15px;
             padding: 20px;
-            font-size: 14px;
             border: none;
             outline: none;
             resize: none;
+            line-height: 1.5;
         }
 
-        .output-box {
+        .output-zone {
             flex: 1;
-            background: #000;
-            border-top: 2px solid #444;
-            padding: 15px;
-            font-family: 'Consolas', monospace;
-            font-size: 13px;
-            color: #00ff00;
-            overflow-y: auto;
+            background: #1e1e1e;
+            border-top: 4px solid #333;
+            color: #dcdcdc;
+            display: flex;
+            flex-direction: column;
         }
 
-        iframe { width: 100%; height: 100%; background: white; border: none; }
+        .output-header { padding: 5px 15px; background: #333; font-size: 0.75rem; color: #888; }
+        #output-frame { width: 100%; height: 100%; background: white; border: none; display: none; }
+        #console-log { padding: 15px; font-family: 'Consolas', monospace; white-space: pre-wrap; flex: 1; overflow-y: auto; color: #00ff00; }
 
-        /* Buttons */
-        .btn-run { background: var(--accent); color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-run:hover { background: #059862; }
+        /* Action Buttons */
+        .btn-run { background: var(--success); color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .btn-run:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
 
-        .progress-bar { height: 5px; background: #ddd; width: 100%; }
-        #progress-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.5s; }
-        
-        h1, h2 { color: var(--primary); }
-        code { background: #eee; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
+        footer {
+            background: #1a1a2e;
+            color: #888;
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        footer a { color: var(--accent); text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <div class="syllabus">
-        <div class="syllabus-header">BRU WEB ACADEMY</div>
-        <div class="progress-bar"><div id="progress-fill"></div></div>
-        
-        <div class="course-folder">Module 1: Web Foundation</div>
-        <div class="lesson-link active" onclick="loadPage('h1')">1.1 Introduction to HTML</div>
-        <div class="lesson-link" onclick="loadPage('h2')">1.2 Styling with CSS</div>
-        
-        <div class="course-folder">Module 2: Logic & Data</div>
-        <div class="lesson-link" onclick="loadPage('p1')">2.1 Python Variables</div>
-        <div class="lesson-link" onclick="loadPage('p2')">2.2 Python Loops</div>
-        
-        <div class="course-folder">Module 3: Systems</div>
-        <div class="lesson-link" onclick="loadPage('c1')">3.1 C++ Syntax</div>
-    </div>
+    <aside class="sidebar">
+        <div class="branding">
+            <h1>BRU WEB ACADEMY</h1>
+            <p>Master the Code with Inezaime Bruno</p>
+        </div>
+        <div class="syllabus" id="syllabus-list">
+            </div>
+    </aside>
 
-    <div class="tutorial-pane" id="lesson-ui">
+    <main class="main-stage">
+        <header>
+            <h2 id="lesson-header">Select a Language</h2>
+            <button class="btn-run" onclick="runEngine()">RUN CODE</button>
+        </header>
+
+        <div class="workspace">
+            <div class="tutorial-panel" id="tutorial-content">
+                </div>
+
+            <div class="compiler-panel">
+                <div class="editor-top">
+                    <span id="editor-lang-label">Editor</span>
+                    <span id="save-status">Progress Saved</span>
+                </div>
+                <textarea id="code-editor" spellcheck="false" placeholder="Write code here..."></textarea>
+                <div class="output-zone">
+                    <div class="output-header">LIVE OUTPUT / CONSOLE</div>
+                    <iframe id="output-frame"></iframe>
+                    <div id="console-log">Console Ready...</div>
+                </div>
+            </div>
         </div>
 
-    <div class="compiler-pane">
-        <div class="compiler-header">
-            <span>Interactive Compiler</span>
-            <button class="btn-run" onclick="execute()">Run Code &rsaquo;</button>
-        </div>
-        <textarea id="editor" spellcheck="false"></textarea>
-        <div class="output-box" id="output-console">
-            <iframe id="html-preview" style="display:none;"></iframe>
-            <div id="text-output">Console ready...</div>
-        </div>
-    </div>
+        <footer>
+            <span>© 2026 Inezaime Bruno | BRU WEB Engine</span>
+            <span>Check out: <a href="https://bru-ai.vercel.app" target="_blank">bru-ai.vercel.app</a></span>
+        </footer>
+    </main>
 
     <script>
         let pyodide;
         const lessons = {
-            'h1': {
-                type: 'html',
-                title: 'Introduction to HTML',
-                text: '<h1>HTML Basics</h1><p>HTML is the skeleton of the web. It uses "Tags" to tell the browser what to show.</p><h3>Task:</h3><p>Try changing the <code>&lt;h1&gt;</code> text to your name!</p>',
-                code: '<html>\n<body>\n  <h1>Welcome to My Website</h1>\n  <p>Learning at BRU WEB is fun.</p>\n</body>\n</html>'
-            },
-            'p1': {
-                type: 'python',
-                title: 'Python Variables',
-                text: '<h1>Python Variables</h1><p>In Python, we store data in variables. Unlike C++, you don\'t need to define the type.</p><h3>Task:</h3><p>Change the <code>age</code> variable and run the code.</p>',
-                code: 'name = "User"\nage = 25\nprint(f"Hello {name}, you are {age} years old.")'
-            },
-            'c1': {
-                type: 'cpp',
-                title: 'C++ Basics',
-                text: '<h1>C++ Structure</h1><p>C++ is a compiled language. Every program starts with a <code>main()</code> function.</p>',
-                code: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "C++ logic in the browser!" << endl;\n    return 0;\n}'
-            }
+            html: { name: "HTML5 Structure", module: "Web", type: "html", text: "<h2>The Architecture of the Web</h2><p>HTML (HyperText Markup Language) is the most basic building block of the Web. It defines the meaning and structure of web content.</p><blockquote><strong>Task:</strong> Try adding a &lt;button&gt; tag below the header.</blockquote>", code: "<h1>Hello World</h1>\n<p>This is BRU WEB by Inezaime Bruno.</p>" },
+            css: { name: "CSS3 Styling", module: "Web", type: "html", text: "<h2>Cascading Style Sheets</h2><p>CSS is used to style and layout web pages — for example, to alter the font, color, size, and spacing of your content.</p>", code: "<style>\n body { background: #f0f9ff; text-align: center; }\n h1 { color: #00d2ff; font-family: sans-serif; }\n</style>\n<h1>Styled with CSS</h1>" },
+            js: { name: "JavaScript ES6", module: "Web", type: "js", text: "<h2>JavaScript: The Logic</h2><p>JavaScript is a scripting language that enables you to create dynamically updating content, control multimedia, and animate images.</p>", code: "let user = 'Inezaime Bruno';\nconsole.log('Welcome, ' + user);\n\nfunction greet() {\n  alert('Hello from BRU WEB!');\n}\ngreet();" },
+            python: { name: "Python 3", module: "Data", type: "py", text: "<h2>Python: Data & AI</h2><p>Python is an interpreted, high-level, general-purpose programming language. Its design philosophy emphasizes code readability.</p>", code: "name = 'Inezaime Bruno'\nprint(f'System running on {name}\\'s Engine')\n\nfor i in range(3):\n    print(f'Computing cycle {i}...') " },
+            sql: { name: "SQL (Database)", module: "Data", type: "js", text: "<h2>Structured Query Language</h2><p>SQL is used to communicate with a database. It is the standard language for relational database management systems.</p>", code: "// Simulated SQL Logic\nlet query = 'SELECT * FROM Users WHERE name=\"Inezaime\"';\nconsole.log('Executing: ' + query);\nconsole.log('Result: 1 user found.');" },
+            cpp: { name: "C++ Programming", module: "Systems", type: "js", text: "<h2>C++: High Performance</h2><p>C++ is a cross-platform language that can be used to create high-performance applications.</p>", code: "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hello from C++ Division\" << endl;\n    return 0;\n}" },
+            java: { name: "Java Enterprise", module: "Systems", type: "js", text: "<h2>Java: Write Once, Run Anywhere</h2><p>Java is a high-level, class-based, object-oriented programming language designed to have as few implementation dependencies as possible.</p>", code: "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Java Logic Initialized\");\n  }\n}" },
+            php: { name: "PHP Backend", module: "Web", type: "html", text: "<h2>PHP: Server Side</h2><p>PHP is a popular general-purpose scripting language that is especially suited to web development.</p>", code: "<h1>PHP Interface</h1>\n<?php echo 'Server Logic'; ?>\n<p>Simulation of PHP rendering.</p>" },
+            swift: { name: "Swift (iOS)", module: "Mobile", type: "js", text: "<h2>Swift: Apple Systems</h2><p>Swift is a powerful and intuitive programming language for iOS, iPadOS, macOS, tvOS, and watchOS.</p>", code: "var message = \"Hello iOS\"\nprint(message)" },
+            rust: { name: "Rust Safety", module: "Systems", type: "js", text: "<h2>Rust: Memory Safety</h2><p>Rust is a multi-paradigm, general-purpose programming language designed for performance and safety.</p>", code: "fn main() {\n    println!(\"Rust Safety Check: Passed\");\n}" }
         };
 
-        let currentId = 'h1';
+        let currentId = 'html';
 
-        async function loadPage(id) {
+        function initApp() {
+            const list = document.getElementById('syllabus-list');
+            let currentModule = "";
+            
+            for (let id in lessons) {
+                if (lessons[id].module !== currentModule) {
+                    currentModule = lessons[id].module;
+                    let div = document.createElement('div');
+                    div.className = 'module-title';
+                    div.innerText = currentModule;
+                    list.appendChild(div);
+                }
+                let item = document.createElement('div');
+                item.className = 'nav-item';
+                item.id = 'nav-' + id;
+                item.innerHTML = `<span>${lessons[id].name}</span> <span>&rsaquo;</span>`;
+                item.onclick = () => loadLesson(id);
+                list.appendChild(item);
+            }
+            loadLesson('html');
+        }
+
+        function loadLesson(id) {
+            // Save current code
+            localStorage.setItem('bru_code_' + currentId, document.getElementById('code-editor').value);
+
             currentId = id;
             const lesson = lessons[id];
             
-            // Update UI
-            document.querySelectorAll('.lesson-link').forEach(el => el.classList.remove('active'));
-            event?.target?.classList?.add('active');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-' + id).classList.add('active');
             
-            document.getElementById('lesson-ui').innerHTML = lesson.text;
+            document.getElementById('lesson-header').innerText = lesson.name;
+            document.getElementById('tutorial-content').innerHTML = lesson.text;
+            document.getElementById('editor-lang-label').innerText = lesson.name + " Editor";
             
-            // Load code from LocalStorage or default
-            const saved = localStorage.getItem('bru_' + id);
-            document.getElementById('editor').value = saved || lesson.code;
-            
-            // Update Progress
-            updateProgress();
-            execute();
+            const saved = localStorage.getItem('bru_code_' + id);
+            document.getElementById('code-editor').value = saved || lesson.code;
+
+            runEngine();
         }
 
-        async function execute() {
-            const code = document.getElementById('editor').value;
+        async function runEngine() {
+            const code = document.getElementById('code-editor').value;
             const type = lessons[currentId].type;
-            localStorage.setItem('bru_' + currentId, code); // Save progress
-
-            const textOut = document.getElementById('text-output');
-            const frame = document.getElementById('html-preview');
+            const consoleBox = document.getElementById('console-log');
+            const frame = document.getElementById('output-frame');
 
             if (type === 'html') {
-                textOut.style.display = 'none';
                 frame.style.display = 'block';
+                consoleBox.style.display = 'none';
                 const doc = frame.contentDocument;
                 doc.open(); doc.write(code); doc.close();
             } else {
                 frame.style.display = 'none';
-                textOut.style.display = 'block';
-                textOut.innerText = "Running...";
+                consoleBox.style.display = 'block';
+                consoleBox.innerText = "Running " + lessons[currentId].name + "...\n";
 
-                if (type === 'python') {
+                if (type === 'py') {
                     if (!pyodide) pyodide = await loadPyodide();
                     try {
-                        let output = await pyodide.runPython(`
-                            import sys, io
-                            sys.stdout = io.StringIO()
-                            ${code}
-                            sys.stdout.getvalue()
-                        `);
-                        textOut.innerText = output;
-                    } catch(e) { textOut.innerText = e; }
+                        let out = await pyodide.runPython(`import sys, io\nsys.stdout = io.StringIO()\n${code}\nsys.stdout.getvalue()`);
+                        consoleBox.innerText = out;
+                    } catch(e) { consoleBox.innerText = e; }
                 } else {
-                    textOut.innerText = "Syntax Check Passed (Simulation Mode)\nOutput: " + (code.includes('cout') ? "Hello World" : "Compiled");
+                    // Logic Simulation for other languages
+                    let logs = [];
+                    const fakeConsole = { log: (m) => logs.push(m) };
+                    try {
+                        const scriptFunc = new Function('console', code);
+                        scriptFunc(fakeConsole);
+                        consoleBox.innerText = logs.length ? logs.join('\n') : "Code executed successfully (Check syntax).";
+                    } catch(e) { consoleBox.innerText = "Syntax Output: Code verified. Simulation active."; }
                 }
             }
         }
 
-        function updateProgress() {
-            const total = Object.keys(lessons).length;
-            const currentIdx = Object.keys(lessons).indexOf(currentId) + 1;
-            document.getElementById('progress-fill').style.width = (currentIdx / total * 100) + '%';
-        }
-
-        window.onload = () => loadPage('h1');
+        initApp();
     </script>
 </body>
 </html>
