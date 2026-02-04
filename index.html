@@ -5,6 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BRU WEB | Developed by Inezaime Bruno</title>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+</head>
+<body data-theme="light">
+
+    <nav>
+        <div class="nav-brand">
+            <h2>BRU WEB</h2>
+            <p>Inezaime Bruno Academy</p>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-group">Web Standard</div>
+            <button class="nav-link active" id="m-html" onclick="loadModule('html')">HTML Structure</button>
+            <button class="nav-link" id="m-css" onclick="loadModule('css')">CSS Styling</button>
+            <button class="nav-link" id="m-js" onclick="loadModule('js')">JavaScript ES6</button>
+
+            <div class="nav-group">Modern Backend</div>
+            <button class="nav-link" id="m-python" onclick="loadModule('python')">Python 3.11</button>
+            <button class="nav-link" id="m-sql" onclick="loadModule('sql')">SQL Database</button>
+            <button class="nav-link" id="m-php" onclick="loadModule('php')">PHP Server</button>
+
+            <div class="nav-group">Systems Engineering</div>
+            <button class="nav-link" id="m-cpp" onclick="loadModule('cpp')">C++ Master</button>
+            <button class="nav-link" id="m-java" onclick="loadModule('java')">Java Enterprise</button>
+            <button class="nav-link" id="m-rust" onclick="loadModule('rust')">Rust Safety</button>
+            <button class="nav-link" id="m-swift" onclick="loadModule('swift')">Swift iOS</button>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <h1 id="mod-title" style="font-size: 18px;">HTML5 Academy</h1>
+            <div style="display: flex;">
+                <button class="btn-action" style="background:var(--text-main)" onclick="toggleTheme()">🌓 Theme</button>
+                <button class="btn-action" style="background:var(--success)" onclick="formatCode()">✨ Auto-Space</button>
+                <button class="btn-action" onclick="saveToFile()">💾 Save Code</button>
+            </div>
+        </header>
+
+        <div class="workspace">
+            <div class="lesson-panel">
+                <div class="tab-nav">
+                    <div id="t-learn" class="tab-item active" onclick="switchTab('learn')">COURSE GUIDE</div>
+                    <div id="t-quiz" class="tab-item" onclick="switchTab('quiz')">QUIZ MODE</div>
+                </div>
+
+                <div id="p-learn" class="content-pane">
+                    </div>
+
+                <div id="p-quiz" class="content-pane hide">
+                    <h2>Quiz Evaluation</h2>
+                    <div id="quiz-root"></div>
+                </div>
+            </div>
+
+            <div class="execution-zone">
+                <div class="editor-box">
+                    <div class="box-header">
+                        <span id="editor-info">FILE: INDEX.HTML</span>
+                        <button class="btn-action" onclick="runSystem()" style="padding: 5px 15px;">RUN SYSTEM &rsaquo;</button>
+                    </div>
+                    <textarea id="code-editor" spellcheck="false"></textarea>
+                </div>
+
+                <div class="output-box">
+                    <div class="box-header" style="background:#eee; color:#333">LIVE EXECUTION CONSOLE</div>
+                    <iframe id="preview"></iframe>
+                    <div id="console"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            © 2026 BRU WEB | Crafted by <b>Inezaime Bruno</b> | Hosting at <a href="https://bru-ai.vercel.app" style="color:var(--accent); margin-left:5px;">bru-ai.vercel.app</a>
+        </footer>
+    </main>
     <style>
         :root {
             --bg-body: #f8f9fa;
@@ -149,80 +223,6 @@
 
         .hide { display: none; }
     </style>
-</head>
-<body data-theme="light">
-
-    <nav>
-        <div class="nav-brand">
-            <h2>BRU WEB</h2>
-            <p>Inezaime Bruno Academy</p>
-        </div>
-        <div class="nav-menu">
-            <div class="nav-group">Web Standard</div>
-            <button class="nav-link active" id="m-html" onclick="loadModule('html')">HTML Structure</button>
-            <button class="nav-link" id="m-css" onclick="loadModule('css')">CSS Styling</button>
-            <button class="nav-link" id="m-js" onclick="loadModule('js')">JavaScript ES6</button>
-
-            <div class="nav-group">Modern Backend</div>
-            <button class="nav-link" id="m-python" onclick="loadModule('python')">Python 3.11</button>
-            <button class="nav-link" id="m-sql" onclick="loadModule('sql')">SQL Database</button>
-            <button class="nav-link" id="m-php" onclick="loadModule('php')">PHP Server</button>
-
-            <div class="nav-group">Systems Engineering</div>
-            <button class="nav-link" id="m-cpp" onclick="loadModule('cpp')">C++ Master</button>
-            <button class="nav-link" id="m-java" onclick="loadModule('java')">Java Enterprise</button>
-            <button class="nav-link" id="m-rust" onclick="loadModule('rust')">Rust Safety</button>
-            <button class="nav-link" id="m-swift" onclick="loadModule('swift')">Swift iOS</button>
-        </div>
-    </nav>
-
-    <main>
-        <header>
-            <h1 id="mod-title" style="font-size: 18px;">HTML5 Academy</h1>
-            <div style="display: flex;">
-                <button class="btn-action" style="background:var(--text-main)" onclick="toggleTheme()">🌓 Theme</button>
-                <button class="btn-action" style="background:var(--success)" onclick="formatCode()">✨ Auto-Space</button>
-                <button class="btn-action" onclick="saveToFile()">💾 Save Code</button>
-            </div>
-        </header>
-
-        <div class="workspace">
-            <div class="lesson-panel">
-                <div class="tab-nav">
-                    <div id="t-learn" class="tab-item active" onclick="switchTab('learn')">COURSE GUIDE</div>
-                    <div id="t-quiz" class="tab-item" onclick="switchTab('quiz')">QUIZ MODE</div>
-                </div>
-
-                <div id="p-learn" class="content-pane">
-                    </div>
-
-                <div id="p-quiz" class="content-pane hide">
-                    <h2>Quiz Evaluation</h2>
-                    <div id="quiz-root"></div>
-                </div>
-            </div>
-
-            <div class="execution-zone">
-                <div class="editor-box">
-                    <div class="box-header">
-                        <span id="editor-info">FILE: INDEX.HTML</span>
-                        <button class="btn-action" onclick="runSystem()" style="padding: 5px 15px;">RUN SYSTEM &rsaquo;</button>
-                    </div>
-                    <textarea id="code-editor" spellcheck="false"></textarea>
-                </div>
-
-                <div class="output-box">
-                    <div class="box-header" style="background:#eee; color:#333">LIVE EXECUTION CONSOLE</div>
-                    <iframe id="preview"></iframe>
-                    <div id="console"></div>
-                </div>
-            </div>
-        </div>
-
-        <footer>
-            © 2026 BRU WEB | Crafted by <b>Inezaime Bruno</b> | Hosting at <a href="https://bru-ai.vercel.app" style="color:var(--accent); margin-left:5px;">bru-ai.vercel.app</a>
-        </footer>
-    </main>
 
     <script>
         let pyodide;
