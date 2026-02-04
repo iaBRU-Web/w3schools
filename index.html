@@ -3,200 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRU WEB | Practice Lab</title>
-</head>
-<body>
-
-    <header>
-        <div class="logo">BRU WEB Lab</div>
-        <div id="save-indicator" class="status-tag">Saved to LocalStorage</div>
-    </header>
-
-    <div class="container">
-        <div class="panel">
-            <div class="panel-header">
-                CODE EDITOR
-                <button class="clear-btn" onclick="clearEditor()">Reset Lab</button>
-            </div>
-            <textarea id="editor" spellcheck="false" placeholder="Write HTML/CSS/JS here..."></textarea>
-        </div>
-
-        <div class="panel">
-            <div class="panel-header">
-                RESULT
-                <button class="run-btn" onclick="runCode()">Run &rsaquo;</button>
-            </div>
-            <iframe id="output"></iframe>
-        </div>
-    </div>
+    <title>BRU WEB | Learn Programming</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
     <style>
         :root {
-            --dark: #1e1e1e;
-            --light: #f8f9fa;
-            --accent: #04AA6D; /* W3Schools Green */
+            --sidebar-color: #282c34;
+            --header-color: #ffffff;
+            --accent: #04AA6D;
+            --text-main: #333;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             margin: 0;
             display: flex;
-            flex-direction: column;
             height: 100vh;
-            background: #e7e9eb;
+            background-color: #f1f1f1;
         }
 
-        /* Top Header */
-        header {
-            background: white;
-            padding: 10px 20px;
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 220px;
+            background: var(--sidebar-color);
+            color: white;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
         }
 
-        .logo { font-weight: bold; font-size: 1.5rem; color: #333; }
-        .status-tag { font-size: 0.8rem; color: #666; background: #eee; padding: 2px 8px; border-radius: 10px; }
+        .sidebar-header {
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: #1c1f24;
+            text-align: center;
+            border-bottom: 1px solid #444;
+        }
 
-        /* Workspace Layout */
-        .container {
+        .lang-btn {
+            background: none;
+            border: none;
+            color: #abb2bf;
+            padding: 15px 20px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+            border-bottom: 1px solid #333;
+        }
+
+        .lang-btn:hover { background: #3e4451; color: white; }
+        .lang-btn.active { background: var(--accent); color: white; }
+
+        /* Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toolbar {
+            height: 60px;
+            background: var(--header-color);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .workspace {
             display: flex;
             flex: 1;
-            padding: 10px;
-            gap: 10px;
+            padding: 15px;
+            gap: 15px;
             overflow: hidden;
         }
 
-        /* Panels */
-        .panel {
+        .editor-container, .output-container {
             flex: 1;
             display: flex;
             flex-direction: column;
             background: white;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
             overflow: hidden;
+            border: 1px solid #ddd;
         }
 
-        .panel-header {
-            background: #f1f1f1;
+        .label {
+            background: #eee;
             padding: 8px 15px;
-            font-size: 0.9rem;
             font-weight: bold;
+            font-size: 0.8rem;
             display: flex;
             justify-content: space-between;
-            border-bottom: 1px solid #ddd;
         }
 
-        /* Editor Area */
         textarea {
+            flex: 1;
+            padding: 15px;
+            font-family: 'Consolas', monospace;
+            font-size: 15px;
+            border: none;
+            outline: none;
+            resize: none;
+            background: #fafafa;
+        }
+
+        #output-frame, #console-output {
             flex: 1;
             width: 100%;
             border: none;
             padding: 15px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 16px;
-            outline: none;
-            background: #fff;
-            color: #000;
-            resize: none;
-        }
-
-        /* Output Area */
-        iframe {
-            flex: 1;
-            width: 100%;
-            border: none;
-            background: white;
+            font-family: 'Consolas', monospace;
+            white-space: pre-wrap;
+            overflow-y: auto;
         }
 
         .run-btn {
             background: var(--accent);
             color: white;
             border: none;
-            padding: 5px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+            padding: 10px 25px;
             font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
         .run-btn:hover { background: #059862; }
-
-        .clear-btn {
-            background: #ff4757;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            font-size: 0.7rem;
-            border-radius: 3px;
-            cursor: pointer;
+        
+        .tutorial-box {
+            background: #fff4a3;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
         }
     </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">BRU WEB</div>
+        <button class="lang-btn active" onclick="switchLang('html')">HTML Division</button>
+        <button class="lang-btn" onclick="switchLang('python')">Python Division</button>
+        <button class="lang-btn" onclick="switchLang('cpp')">C++ Division (Logic)</button>
+        <button class="lang-btn" onclick="switchLang('js')">JS Division</button>
+    </div>
+
+    <div class="main-content">
+        <div class="toolbar">
+            <h2 id="current-lang-title">HTML Division</h2>
+            <button class="run-btn" onclick="runCode()">Run Code &rsaquo;</button>
+        </div>
+
+        <div class="workspace">
+            <div class="editor-container">
+                <div class="label">EDITOR <span id="save-status">Auto-saving...</span></div>
+                <div class="tutorial-box" id="tutorial-text">
+                    HTML is the foundation. Create buttons, text, and links here!
+                </div>
+                <textarea id="editor" spellcheck="false"></textarea>
+            </div>
+
+            <div class="output-container">
+                <div class="label">OUTPUT / CONSOLE</div>
+                <iframe id="output-frame"></iframe>
+                <div id="console-output" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        const editor = document.getElementById('editor');
-        const output = document.getElementById('output');
-        const indicator = document.getElementById('save-indicator');
+        let currentMode = 'html';
+        let pyodideInstance = null;
 
-        // 1. Load data from LocalStorage on Startup
-        window.onload = () => {
-            const savedCode = localStorage.getItem('bru_web_code');
-            if (savedCode) {
-                editor.value = savedCode;
-            } else {
-                // Default starter code
-                editor.value = "<html>\n<style>\n  h1 { color: #04AA6D; }\n</style>\n<body>\n  <h1>Hello BRU WEB!</h1>\n  <p>Your progress is saved locally.</p>\n</body>\n</html>";
+        const content = {
+            html: {
+                title: "HTML Division",
+                tutorial: "HTML defines structure. Use &lt;h1&gt; for titles and &lt;p&gt; for text.",
+                code: "<h1>Welcome to BRU WEB</h1>\n<p>Start editing to see changes.</p>"
+            },
+            python: {
+                title: "Python Division",
+                tutorial: "Python is great for data. Use print() to see output in the console.",
+                code: "name = 'Student'\nprint(f'Hello {name}, welcome to Python!')\n\nfor i in range(5):\n    print(f'Step {i}')"
+            },
+            cpp: {
+                title: "C++ Division",
+                tutorial: "C++ is high-performance. (Note: Browser C++ is simulated via JS for learning syntax).",
+                code: "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hello World from C++!\" << endl;\n    return 0;\n}"
+            },
+            js: {
+                title: "JavaScript Division",
+                tutorial: "JS makes things move. Use console.log() or alert().",
+                code: "console.log('Hello from JavaScript!');\nlet x = 10;\nlet y = 20;\nconsole.log('Sum is: ' + (x + y));"
             }
-            runCode();
         };
 
-        // 2. Auto-Save to LocalStorage on typing
-        editor.addEventListener('input', () => {
-            localStorage.setItem('bru_web_code', editor.value);
-            indicator.innerText = "Saving...";
-            setTimeout(() => {
-                indicator.innerText = "Saved to LocalStorage";
-            }, 500);
+        // Initialize Pyodide
+        async function initPy() {
+            if (!pyodideInstance) {
+                document.getElementById('console-output').innerText = "Loading Python Engine... please wait.";
+                pyodideInstance = await loadPyodide();
+                document.getElementById('console-output').innerText = "Python Ready!";
+            }
+        }
+
+        function switchLang(lang) {
+            // Save old lang
+            localStorage.setItem(`bru_code_${currentMode}`, document.getElementById('editor').value);
+            
+            currentMode = lang;
+            
+            // Update UI
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('current-lang-title').innerText = content[lang].title;
+            document.getElementById('tutorial-text').innerHTML = content[lang].tutorial;
+            
+            // Load saved code or default
+            const saved = localStorage.getItem(`bru_code_${lang}`);
+            document.getElementById('editor').value = saved || content[lang].code;
+
+            // Toggle Output View
+            if (lang === 'html') {
+                document.getElementById('output-frame').style.display = 'block';
+                document.getElementById('console-output').style.display = 'none';
+            } else {
+                document.getElementById('output-frame').style.display = 'none';
+                document.getElementById('console-output').style.display = 'block';
+            }
+            
+            if (lang === 'python') initPy();
+            runCode();
+        }
+
+        async function runCode() {
+            const code = document.getElementById('editor').value;
+            const consoleBox = document.getElementById('console-output');
+            
+            if (currentMode === 'html') {
+                const frame = document.getElementById('output-frame');
+                const doc = frame.contentDocument || frame.contentWindow.document;
+                doc.open();
+                doc.write(code);
+                doc.close();
+            } 
+            else if (currentMode === 'python') {
+                if (!pyodideInstance) return;
+                consoleBox.innerText = "Running Python...\n";
+                try {
+                    // Redirect python stdout to our console
+                    pyodideInstance.runPython(`
+                        import sys
+                        import io
+                        sys.stdout = io.StringIO()
+                    `);
+                    await pyodideInstance.runPythonAsync(code);
+                    let stdout = pyodideInstance.runPython("sys.stdout.getvalue()");
+                    consoleBox.innerText = stdout;
+                } catch (err) {
+                    consoleBox.innerText = "Python Error: " + err;
+                }
+            }
+            else if (currentMode === 'js' || currentMode === 'cpp') {
+                // For learning logic, we intercept console.log
+                consoleBox.innerText = "Console Output:\n";
+                let logs = [];
+                const oldLog = console.log;
+                console.log = (msg) => logs.push(msg);
+                
+                try {
+                    if(currentMode === 'cpp') {
+                        // Simulated C++ (Simple syntax check)
+                        if(code.includes("cout <<")) {
+                            let match = code.match(/cout << "(.*)"/);
+                            logs.push(match ? match[1] : "C++ logic processed (Simulated)");
+                        }
+                    } else {
+                        eval(code);
+                    }
+                } catch (e) { logs.push("Error: " + e); }
+                
+                console.log = oldLog;
+                consoleBox.innerText += logs.join('\n');
+            }
+        }
+
+        // Auto-save
+        document.getElementById('editor').addEventListener('input', () => {
+            localStorage.setItem(`bru_code_${currentMode}`, document.getElementById('editor').value);
         });
 
-        // 3. The "Engine": Render code to Iframe
-        function runCode() {
-            const code = editor.value;
-            const documentContents = `
-                <!DOCTYPE html>
-                <html>
-                    <head>
-                        <meta charset="UTF-8">
-                    </head>
-                    <body>
-                        ${code}
-                    </body>
-                </html>
-            `;
-            
-            const frameDoc = output.contentDocument || output.contentWindow.document;
-            frameDoc.open();
-            frameDoc.write(documentContents);
-            frameDoc.close();
-        }
-
-        // 4. Reset Function
-        function clearEditor() {
-            if(confirm("This will delete your saved code. Continue?")) {
-                localStorage.removeItem('bru_web_code');
-                location.reload();
-            }
-        }
-
-        // Allow Tab key in Textarea (Quality of Life)
-        editor.onkeydown = function(e) {
-            if(e.keyCode==9 || e.which==9) {
-                e.preventDefault();
-                var s = this.selectionStart;
-                this.value = this.value.substring(0,this.selectionStart) + "    " + this.value.substring(this.selectionEnd);
-                this.selectionEnd = s + 4; 
-            }
-        };
+        // Load default on start
+        window.onload = () => switchLang('html');
     </script>
 </body>
 </html>
