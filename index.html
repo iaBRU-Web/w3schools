@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRU WEB | Practice Lab</title>
+</head>
+<body>
+
+    <header>
+        <div class="logo">BRU WEB Lab</div>
+        <div id="save-indicator" class="status-tag">Saved to LocalStorage</div>
+    </header>
+
+    <div class="container">
+        <div class="panel">
+            <div class="panel-header">
+                CODE EDITOR
+                <button class="clear-btn" onclick="clearEditor()">Reset Lab</button>
+            </div>
+            <textarea id="editor" spellcheck="false" placeholder="Write HTML/CSS/JS here..."></textarea>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                RESULT
+                <button class="run-btn" onclick="runCode()">Run &rsaquo;</button>
+            </div>
+            <iframe id="output"></iframe>
+        </div>
+    </div>
+    <style>
+        :root {
+            --dark: #1e1e1e;
+            --light: #f8f9fa;
+            --accent: #04AA6D; /* W3Schools Green */
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #e7e9eb;
+        }
+
+        /* Top Header */
+        header {
+            background: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .logo { font-weight: bold; font-size: 1.5rem; color: #333; }
+        .status-tag { font-size: 0.8rem; color: #666; background: #eee; padding: 2px 8px; border-radius: 10px; }
+
+        /* Workspace Layout */
+        .container {
+            display: flex;
+            flex: 1;
+            padding: 10px;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        /* Panels */
+        .panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: #f1f1f1;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Editor Area */
+        textarea {
+            flex: 1;
+            width: 100%;
+            border: none;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 16px;
+            outline: none;
+            background: #fff;
+            color: #000;
+            resize: none;
+        }
+
+        /* Output Area */
+        iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: white;
+        }
+
+        .run-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 5px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .run-btn:hover { background: #059862; }
+
+        .clear-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+
+    <script>
+        const editor = document.getElementById('editor');
+        const output = document.getElementById('output');
+        const indicator = document.getElementById('save-indicator');
+
+        // 1. Load data from LocalStorage on Startup
+        window.onload = () => {
+            const savedCode = localStorage.getItem('bru_web_code');
+            if (savedCode) {
+                editor.value = savedCode;
+            } else {
+                // Default starter code
+                editor.value = "<html>\n<style>\n  h1 { color: #04AA6D; }\n</style>\n<body>\n  <h1>Hello BRU WEB!</h1>\n  <p>Your progress is saved locally.</p>\n</body>\n</html>";
+            }
+            runCode();
+        };
+
+        // 2. Auto-Save to LocalStorage on typing
+        editor.addEventListener('input', () => {
+            localStorage.setItem('bru_web_code', editor.value);
+            indicator.innerText = "Saving...";
+            setTimeout(() => {
+                indicator.innerText = "Saved to LocalStorage";
+            }, 500);
+        });
+
+        // 3. The "Engine": Render code to Iframe
+        function runCode() {
+            const code = editor.value;
+            const documentContents = `
+                <!DOCTYPE html>
+                <html>
+                    <head>
+                        <meta charset="UTF-8">
+                    </head>
+                    <body>
+                        ${code}
+                    </body>
+                </html>
+            `;
+            
+            const frameDoc = output.contentDocument || output.contentWindow.document;
+            frameDoc.open();
+            frameDoc.write(documentContents);
+            frameDoc.close();
+        }
+
+        // 4. Reset Function
+        function clearEditor() {
+            if(confirm("This will delete your saved code. Continue?")) {
+                localStorage.removeItem('bru_web_code');
+                location.reload();
+            }
+        }
+
+        // Allow Tab key in Textarea (Quality of Life)
+        editor.onkeydown = function(e) {
+            if(e.keyCode==9 || e.which==9) {
+                e.preventDefault();
+                var s = this.selectionStart;
+                this.value = this.value.substring(0,this.selectionStart) + "    " + this.value.substring(this.selectionEnd);
+                this.selectionEnd = s + 4; 
+            }
+        };
+    </script>
+</body>
+</html>
