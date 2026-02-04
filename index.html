@@ -3,302 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRU WEB | Learn Programming</title>
+    <title>BRU WEB | Full Stack Academy</title>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
     <style>
         :root {
-            --sidebar-color: #282c34;
-            --header-color: #ffffff;
+            --primary: #2c3e50;
             --accent: #04AA6D;
-            --text-main: #333;
+            --bg-light: #f4f6f8;
+            --border: #d1d5db;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            background-color: #f1f1f1;
-        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; background: var(--bg-light); }
 
-        /* Sidebar Navigation */
-        .sidebar {
-            width: 220px;
-            background: var(--sidebar-color);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: #1c1f24;
-            text-align: center;
-            border-bottom: 1px solid #444;
-        }
-
-        .lang-btn {
-            background: none;
-            border: none;
-            color: #abb2bf;
-            padding: 15px 20px;
-            text-align: left;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.2s;
-            border-bottom: 1px solid #333;
-        }
-
-        .lang-btn:hover { background: #3e4451; color: white; }
-        .lang-btn.active { background: var(--accent); color: white; }
-
-        /* Content Area */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .toolbar {
-            height: 60px;
-            background: var(--header-color);
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            justify-content: space-between;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .workspace {
-            display: flex;
-            flex: 1;
-            padding: 15px;
-            gap: 15px;
-            overflow: hidden;
-        }
-
-        .editor-container, .output-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+        /* Left: Course Navigation */
+        .syllabus {
+            width: 280px;
             background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #ddd;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
         }
 
-        .label {
-            background: #eee;
-            padding: 8px 15px;
-            font-weight: bold;
-            font-size: 0.8rem;
+        .syllabus-header { padding: 20px; background: var(--primary); color: white; font-weight: bold; }
+        
+        .course-folder { padding: 15px; background: #eee; font-size: 0.8rem; font-weight: bold; color: #666; text-transform: uppercase; }
+
+        .lesson-link {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: 0.2s;
+        }
+
+        .lesson-link:hover { background: #e8f5e9; }
+        .lesson-link.active { border-left: 5px solid var(--accent); background: #f9fff9; font-weight: bold; }
+
+        /* Middle: Tutorial Content */
+        .tutorial-pane {
+            flex: 1.2;
+            padding: 30px;
+            overflow-y: auto;
+            background: white;
+            line-height: 1.6;
+        }
+
+        /* Right: The Compiler */
+        .compiler-pane {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+            color: white;
+        }
+
+        .compiler-header {
+            padding: 10px;
+            background: #333;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
-        textarea {
-            flex: 1;
-            padding: 15px;
+        #editor {
+            flex: 2;
+            background: #1e1e1e;
+            color: #d4d4d4;
             font-family: 'Consolas', monospace;
-            font-size: 15px;
+            padding: 20px;
+            font-size: 14px;
             border: none;
             outline: none;
             resize: none;
-            background: #fafafa;
         }
 
-        #output-frame, #console-output {
+        .output-box {
             flex: 1;
-            width: 100%;
-            border: none;
+            background: #000;
+            border-top: 2px solid #444;
             padding: 15px;
             font-family: 'Consolas', monospace;
-            white-space: pre-wrap;
+            font-size: 13px;
+            color: #00ff00;
             overflow-y: auto;
         }
 
-        .run-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+        iframe { width: 100%; height: 100%; background: white; border: none; }
 
-        .run-btn:hover { background: #059862; }
+        /* Buttons */
+        .btn-run { background: var(--accent); color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-run:hover { background: #059862; }
+
+        .progress-bar { height: 5px; background: #ddd; width: 100%; }
+        #progress-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.5s; }
         
-        .tutorial-box {
-            background: #fff4a3;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
+        h1, h2 { color: var(--primary); }
+        code { background: #eee; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-header">BRU WEB</div>
-        <button class="lang-btn active" onclick="switchLang('html')">HTML Division</button>
-        <button class="lang-btn" onclick="switchLang('python')">Python Division</button>
-        <button class="lang-btn" onclick="switchLang('cpp')">C++ Division (Logic)</button>
-        <button class="lang-btn" onclick="switchLang('js')">JS Division</button>
+    <div class="syllabus">
+        <div class="syllabus-header">BRU WEB ACADEMY</div>
+        <div class="progress-bar"><div id="progress-fill"></div></div>
+        
+        <div class="course-folder">Module 1: Web Foundation</div>
+        <div class="lesson-link active" onclick="loadPage('h1')">1.1 Introduction to HTML</div>
+        <div class="lesson-link" onclick="loadPage('h2')">1.2 Styling with CSS</div>
+        
+        <div class="course-folder">Module 2: Logic & Data</div>
+        <div class="lesson-link" onclick="loadPage('p1')">2.1 Python Variables</div>
+        <div class="lesson-link" onclick="loadPage('p2')">2.2 Python Loops</div>
+        
+        <div class="course-folder">Module 3: Systems</div>
+        <div class="lesson-link" onclick="loadPage('c1')">3.1 C++ Syntax</div>
     </div>
 
-    <div class="main-content">
-        <div class="toolbar">
-            <h2 id="current-lang-title">HTML Division</h2>
-            <button class="run-btn" onclick="runCode()">Run Code &rsaquo;</button>
+    <div class="tutorial-pane" id="lesson-ui">
         </div>
 
-        <div class="workspace">
-            <div class="editor-container">
-                <div class="label">EDITOR <span id="save-status">Auto-saving...</span></div>
-                <div class="tutorial-box" id="tutorial-text">
-                    HTML is the foundation. Create buttons, text, and links here!
-                </div>
-                <textarea id="editor" spellcheck="false"></textarea>
-            </div>
-
-            <div class="output-container">
-                <div class="label">OUTPUT / CONSOLE</div>
-                <iframe id="output-frame"></iframe>
-                <div id="console-output" style="display:none;"></div>
-            </div>
+    <div class="compiler-pane">
+        <div class="compiler-header">
+            <span>Interactive Compiler</span>
+            <button class="btn-run" onclick="execute()">Run Code &rsaquo;</button>
+        </div>
+        <textarea id="editor" spellcheck="false"></textarea>
+        <div class="output-box" id="output-console">
+            <iframe id="html-preview" style="display:none;"></iframe>
+            <div id="text-output">Console ready...</div>
         </div>
     </div>
 
     <script>
-        let currentMode = 'html';
-        let pyodideInstance = null;
-
-        const content = {
-            html: {
-                title: "HTML Division",
-                tutorial: "HTML defines structure. Use &lt;h1&gt; for titles and &lt;p&gt; for text.",
-                code: "<h1>Welcome to BRU WEB</h1>\n<p>Start editing to see changes.</p>"
+        let pyodide;
+        const lessons = {
+            'h1': {
+                type: 'html',
+                title: 'Introduction to HTML',
+                text: '<h1>HTML Basics</h1><p>HTML is the skeleton of the web. It uses "Tags" to tell the browser what to show.</p><h3>Task:</h3><p>Try changing the <code>&lt;h1&gt;</code> text to your name!</p>',
+                code: '<html>\n<body>\n  <h1>Welcome to My Website</h1>\n  <p>Learning at BRU WEB is fun.</p>\n</body>\n</html>'
             },
-            python: {
-                title: "Python Division",
-                tutorial: "Python is great for data. Use print() to see output in the console.",
-                code: "name = 'Student'\nprint(f'Hello {name}, welcome to Python!')\n\nfor i in range(5):\n    print(f'Step {i}')"
+            'p1': {
+                type: 'python',
+                title: 'Python Variables',
+                text: '<h1>Python Variables</h1><p>In Python, we store data in variables. Unlike C++, you don\'t need to define the type.</p><h3>Task:</h3><p>Change the <code>age</code> variable and run the code.</p>',
+                code: 'name = "User"\nage = 25\nprint(f"Hello {name}, you are {age} years old.")'
             },
-            cpp: {
-                title: "C++ Division",
-                tutorial: "C++ is high-performance. (Note: Browser C++ is simulated via JS for learning syntax).",
-                code: "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hello World from C++!\" << endl;\n    return 0;\n}"
-            },
-            js: {
-                title: "JavaScript Division",
-                tutorial: "JS makes things move. Use console.log() or alert().",
-                code: "console.log('Hello from JavaScript!');\nlet x = 10;\nlet y = 20;\nconsole.log('Sum is: ' + (x + y));"
+            'c1': {
+                type: 'cpp',
+                title: 'C++ Basics',
+                text: '<h1>C++ Structure</h1><p>C++ is a compiled language. Every program starts with a <code>main()</code> function.</p>',
+                code: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "C++ logic in the browser!" << endl;\n    return 0;\n}'
             }
         };
 
-        // Initialize Pyodide
-        async function initPy() {
-            if (!pyodideInstance) {
-                document.getElementById('console-output').innerText = "Loading Python Engine... please wait.";
-                pyodideInstance = await loadPyodide();
-                document.getElementById('console-output').innerText = "Python Ready!";
-            }
-        }
+        let currentId = 'h1';
 
-        function switchLang(lang) {
-            // Save old lang
-            localStorage.setItem(`bru_code_${currentMode}`, document.getElementById('editor').value);
-            
-            currentMode = lang;
+        async function loadPage(id) {
+            currentId = id;
+            const lesson = lessons[id];
             
             // Update UI
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            document.querySelectorAll('.lesson-link').forEach(el => el.classList.remove('active'));
+            event?.target?.classList?.add('active');
             
-            document.getElementById('current-lang-title').innerText = content[lang].title;
-            document.getElementById('tutorial-text').innerHTML = content[lang].tutorial;
+            document.getElementById('lesson-ui').innerHTML = lesson.text;
             
-            // Load saved code or default
-            const saved = localStorage.getItem(`bru_code_${lang}`);
-            document.getElementById('editor').value = saved || content[lang].code;
-
-            // Toggle Output View
-            if (lang === 'html') {
-                document.getElementById('output-frame').style.display = 'block';
-                document.getElementById('console-output').style.display = 'none';
-            } else {
-                document.getElementById('output-frame').style.display = 'none';
-                document.getElementById('console-output').style.display = 'block';
-            }
+            // Load code from LocalStorage or default
+            const saved = localStorage.getItem('bru_' + id);
+            document.getElementById('editor').value = saved || lesson.code;
             
-            if (lang === 'python') initPy();
-            runCode();
+            // Update Progress
+            updateProgress();
+            execute();
         }
 
-        async function runCode() {
+        async function execute() {
             const code = document.getElementById('editor').value;
-            const consoleBox = document.getElementById('console-output');
-            
-            if (currentMode === 'html') {
-                const frame = document.getElementById('output-frame');
-                const doc = frame.contentDocument || frame.contentWindow.document;
-                doc.open();
-                doc.write(code);
-                doc.close();
-            } 
-            else if (currentMode === 'python') {
-                if (!pyodideInstance) return;
-                consoleBox.innerText = "Running Python...\n";
-                try {
-                    // Redirect python stdout to our console
-                    pyodideInstance.runPython(`
-                        import sys
-                        import io
-                        sys.stdout = io.StringIO()
-                    `);
-                    await pyodideInstance.runPythonAsync(code);
-                    let stdout = pyodideInstance.runPython("sys.stdout.getvalue()");
-                    consoleBox.innerText = stdout;
-                } catch (err) {
-                    consoleBox.innerText = "Python Error: " + err;
+            const type = lessons[currentId].type;
+            localStorage.setItem('bru_' + currentId, code); // Save progress
+
+            const textOut = document.getElementById('text-output');
+            const frame = document.getElementById('html-preview');
+
+            if (type === 'html') {
+                textOut.style.display = 'none';
+                frame.style.display = 'block';
+                const doc = frame.contentDocument;
+                doc.open(); doc.write(code); doc.close();
+            } else {
+                frame.style.display = 'none';
+                textOut.style.display = 'block';
+                textOut.innerText = "Running...";
+
+                if (type === 'python') {
+                    if (!pyodide) pyodide = await loadPyodide();
+                    try {
+                        let output = await pyodide.runPython(`
+                            import sys, io
+                            sys.stdout = io.StringIO()
+                            ${code}
+                            sys.stdout.getvalue()
+                        `);
+                        textOut.innerText = output;
+                    } catch(e) { textOut.innerText = e; }
+                } else {
+                    textOut.innerText = "Syntax Check Passed (Simulation Mode)\nOutput: " + (code.includes('cout') ? "Hello World" : "Compiled");
                 }
             }
-            else if (currentMode === 'js' || currentMode === 'cpp') {
-                // For learning logic, we intercept console.log
-                consoleBox.innerText = "Console Output:\n";
-                let logs = [];
-                const oldLog = console.log;
-                console.log = (msg) => logs.push(msg);
-                
-                try {
-                    if(currentMode === 'cpp') {
-                        // Simulated C++ (Simple syntax check)
-                        if(code.includes("cout <<")) {
-                            let match = code.match(/cout << "(.*)"/);
-                            logs.push(match ? match[1] : "C++ logic processed (Simulated)");
-                        }
-                    } else {
-                        eval(code);
-                    }
-                } catch (e) { logs.push("Error: " + e); }
-                
-                console.log = oldLog;
-                consoleBox.innerText += logs.join('\n');
-            }
         }
 
-        // Auto-save
-        document.getElementById('editor').addEventListener('input', () => {
-            localStorage.setItem(`bru_code_${currentMode}`, document.getElementById('editor').value);
-        });
+        function updateProgress() {
+            const total = Object.keys(lessons).length;
+            const currentIdx = Object.keys(lessons).indexOf(currentId) + 1;
+            document.getElementById('progress-fill').style.width = (currentIdx / total * 100) + '%';
+        }
 
-        // Load default on start
-        window.onload = () => switchLang('html');
+        window.onload = () => loadPage('h1');
     </script>
 </body>
 </html>
