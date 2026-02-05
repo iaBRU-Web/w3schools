@@ -10,6 +10,63 @@
   <!-- Pyodide for real Python execution -->
   <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
   
+</head>
+<body data-theme="light">
+
+<div class="app">
+  <header>
+    <div class="brand">
+      BRU WEB ACADEMY <small>by Ineza Aime Bruno</small>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn" onclick="toggleTheme()">Toggle Dark Mode</button>
+      <button class="btn btn-primary" onclick="runCode()">Run</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="pane" id="docs">
+      <div class="lang-buttons">
+        <button class="lang-btn active" data-lang="html">HTML</button>
+        <button class="lang-btn" data-lang="python">Python</button>
+        <button class="lang-btn" data-lang="js">JavaScript</button>
+        <button class="lang-btn" data-lang="cpp">C++</button>
+        <button class="lang-btn" data-lang="sql">SQL</button>
+        <button class="lang-btn" data-lang="php">PHP</button>
+      </div>
+      <div class="pane-header">Reference & Examples</div>
+      <div class="scroll" id="docs-content">
+        <h3>Welcome to BRU Academy</h3>
+        <p>Select a language to see detailed documentation, best practices, and examples.</p>
+      </div>
+    </div>
+
+    <div class="resizer" id="resize1"></div>
+
+    <div class="pane" id="editor-pane">
+      <div class="pane-header">
+        <span>Editor — <span id="lang-name">HTML</span></span>
+      </div>
+      <textarea id="editor" spellcheck="false"></textarea>
+      <div class="preview-area">
+        <iframe id="preview"></iframe>
+        <pre id="console"></pre>
+      </div>
+    </div>
+
+    <div class="resizer" id="resize2"></div>
+
+    <div class="pane" id="ai">
+      <div class="pane-header">BRU AI Assistant</div>
+      <iframe id="ai-iframe" src="https://bru-ai.vercel.app/" title="AI Sidekick"></iframe>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 — Crafted with passion by Ineza Aime Bruno</span>
+    <span>BRU Core • Always Learning</span>
+  </footer>
+</div>
   <style>
     :root {
       --bg: #ffffff;
@@ -232,63 +289,6 @@
       background: white; /* Fallback if loading */
     }
   </style>
-</head>
-<body data-theme="light">
-
-<div class="app">
-  <header>
-    <div class="brand">
-      BRU WEB ACADEMY <small>by Ineza Aime Bruno</small>
-    </div>
-    <div style="display:flex; gap:10px;">
-      <button class="btn" onclick="toggleTheme()">Toggle Dark Mode</button>
-      <button class="btn btn-primary" onclick="runCode()">Run</button>
-    </div>
-  </header>
-
-  <div class="main">
-    <div class="pane" id="docs">
-      <div class="lang-buttons">
-        <button class="lang-btn active" data-lang="html">HTML</button>
-        <button class="lang-btn" data-lang="python">Python</button>
-        <button class="lang-btn" data-lang="js">JavaScript</button>
-        <button class="lang-btn" data-lang="cpp">C++</button>
-        <button class="lang-btn" data-lang="sql">SQL</button>
-        <button class="lang-btn" data-lang="php">PHP</button>
-      </div>
-      <div class="pane-header">Reference & Examples</div>
-      <div class="scroll" id="docs-content">
-        <h3>Welcome to BRU Academy</h3>
-        <p>Select a language to see detailed documentation, best practices, and examples.</p>
-      </div>
-    </div>
-
-    <div class="resizer" id="resize1"></div>
-
-    <div class="pane" id="editor-pane">
-      <div class="pane-header">
-        <span>Editor — <span id="lang-name">HTML</span></span>
-      </div>
-      <textarea id="editor" spellcheck="false"></textarea>
-      <div class="preview-area">
-        <iframe id="preview"></iframe>
-        <pre id="console"></pre>
-      </div>
-    </div>
-
-    <div class="resizer" id="resize2"></div>
-
-    <div class="pane" id="ai">
-      <div class="pane-header">BRU AI Assistant</div>
-      <iframe id="ai-iframe" src="https://bru-ai.vercel.app/" title="AI Sidekick"></iframe>
-    </div>
-  </div>
-
-  <footer>
-    <span>© 2026 — Crafted with passion by Ineza Aime Bruno</span>
-    <span>BRU Core • Always Learning</span>
-  </footer>
-</div>
 
 <script>
 // Expanded content database with a lot more info
