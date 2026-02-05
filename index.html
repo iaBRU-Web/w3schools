@@ -7,6 +7,90 @@
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&family=Roboto:wght@400;500;700&display=swap">
   
+</head>
+<body data-theme="light">
+
+<div class="app">
+  <header>
+    <div class="brand">BRU WEB ACADEMY <small>by Ineza Aime Bruno</small></div>
+    <div style="display:flex; gap:10px; flex-wrap: wrap;">
+      <button class="btn" onclick="toggleTheme()">Toggle Dark Mode</button>
+      <button class="btn" onclick="toggleQuizMode()">Quiz Mode</button>
+      <button class="btn" onclick="formatCode()">Format Code</button>
+      <button class="btn btn-primary" onclick="runCode()">Run</button>
+      <button class="btn btn-primary" id="compiler-toggle" onclick="toggleCompilerMode()">Compiler Mode</button>
+      <button class="btn" onclick="openAI()">AI Assistant</button>
+    </div>
+  </header>
+
+  <div class="main" id="main-view">
+    <div class="pane" id="docs">
+      <div class="lang-buttons" id="lang-buttons"></div>
+      <div class="pane-header">Documentation & Examples</div>
+      <div class="scroll" id="docs-content"></div>
+    </div>
+
+    <div class="resizer" id="resize1"></div>
+
+    <div class="pane" id="editor-pane">
+      <div class="pane-header">
+        <span>Editor — <span id="lang-name">HTML</span></span>
+      </div>
+      <textarea id="editor" spellcheck="false"></textarea>
+      <div class="preview-area">
+        <iframe id="preview"></iframe>
+        <pre id="console"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compiler Mode -->
+  <div id="compiler-mode">
+    <div id="code-input-pane">
+      <div class="pane-header">
+        <span>Code — <span id="compiler-lang-name">HTML</span></span>
+        <div>
+          <button class="btn" onclick="toggleCompilerMode()">Back</button>
+          <button class="btn btn-primary" onclick="runCompilerCode()">Run</button>
+        </div>
+      </div>
+      <textarea id="compiler-editor" spellcheck="false"></textarea>
+    </div>
+    <div id="output-pane">
+      <div class="pane-header"><span>Output</span></div>
+      <iframe id="compiler-preview" style="display:none;"></iframe>
+      <pre id="compiler-output"></pre>
+    </div>
+  </div>
+
+  <!-- Quiz Pane -->
+  <div id="quiz-pane" style="display:none; flex-direction:column;">
+    <div class="pane-header">
+      <span>Quiz — <span id="quiz-lang-name"></span></span>
+      <button class="btn" onclick="toggleQuizMode()">Back</button>
+    </div>
+    <div id="quiz-questions" class="scroll"></div>
+    <div style="padding:16px; text-align:center;">
+      <button class="btn btn-primary" onclick="checkQuizAnswers()">Check Answers</button>
+    </div>
+  </div>
+
+  <!-- AI Modal -->
+  <div id="ai-modal" onclick="closeAI()">
+    <div id="ai-container" onclick="event.stopPropagation()">
+      <div id="ai-header">
+        <span>BRU AI Assistant</span>
+        <button class="btn" onclick="closeAI()">Close</button>
+      </div>
+      <iframe id="ai-iframe" src="https://bru-ai.vercel.app/" title="AI"></iframe>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 — Ineza Aime Bruno</span>
+    <span>100% Browser – No API – Works Offline</span>
+  </footer>
+</div>
   <style>
     :root {
       --bg: #ffffff;
@@ -199,90 +283,6 @@
 
     #ai-iframe { flex: 1; border: none; }
   </style>
-</head>
-<body data-theme="light">
-
-<div class="app">
-  <header>
-    <div class="brand">BRU WEB ACADEMY <small>by Ineza Aime Bruno</small></div>
-    <div style="display:flex; gap:10px; flex-wrap: wrap;">
-      <button class="btn" onclick="toggleTheme()">Toggle Dark Mode</button>
-      <button class="btn" onclick="toggleQuizMode()">Quiz Mode</button>
-      <button class="btn" onclick="formatCode()">Format Code</button>
-      <button class="btn btn-primary" onclick="runCode()">Run</button>
-      <button class="btn btn-primary" id="compiler-toggle" onclick="toggleCompilerMode()">Compiler Mode</button>
-      <button class="btn" onclick="openAI()">AI Assistant</button>
-    </div>
-  </header>
-
-  <div class="main" id="main-view">
-    <div class="pane" id="docs">
-      <div class="lang-buttons" id="lang-buttons"></div>
-      <div class="pane-header">Documentation & Examples</div>
-      <div class="scroll" id="docs-content"></div>
-    </div>
-
-    <div class="resizer" id="resize1"></div>
-
-    <div class="pane" id="editor-pane">
-      <div class="pane-header">
-        <span>Editor — <span id="lang-name">HTML</span></span>
-      </div>
-      <textarea id="editor" spellcheck="false"></textarea>
-      <div class="preview-area">
-        <iframe id="preview"></iframe>
-        <pre id="console"></pre>
-      </div>
-    </div>
-  </div>
-
-  <!-- Compiler Mode -->
-  <div id="compiler-mode">
-    <div id="code-input-pane">
-      <div class="pane-header">
-        <span>Code — <span id="compiler-lang-name">HTML</span></span>
-        <div>
-          <button class="btn" onclick="toggleCompilerMode()">Back</button>
-          <button class="btn btn-primary" onclick="runCompilerCode()">Run</button>
-        </div>
-      </div>
-      <textarea id="compiler-editor" spellcheck="false"></textarea>
-    </div>
-    <div id="output-pane">
-      <div class="pane-header"><span>Output</span></div>
-      <iframe id="compiler-preview" style="display:none;"></iframe>
-      <pre id="compiler-output"></pre>
-    </div>
-  </div>
-
-  <!-- Quiz Pane -->
-  <div id="quiz-pane" style="display:none; flex-direction:column;">
-    <div class="pane-header">
-      <span>Quiz — <span id="quiz-lang-name"></span></span>
-      <button class="btn" onclick="toggleQuizMode()">Back</button>
-    </div>
-    <div id="quiz-questions" class="scroll"></div>
-    <div style="padding:16px; text-align:center;">
-      <button class="btn btn-primary" onclick="checkQuizAnswers()">Check Answers</button>
-    </div>
-  </div>
-
-  <!-- AI Modal -->
-  <div id="ai-modal" onclick="closeAI()">
-    <div id="ai-container" onclick="event.stopPropagation()">
-      <div id="ai-header">
-        <span>BRU AI Assistant</span>
-        <button class="btn" onclick="closeAI()">Close</button>
-      </div>
-      <iframe id="ai-iframe" src="https://bru-ai.vercel.app/" title="AI"></iframe>
-    </div>
-  </div>
-
-  <footer>
-    <span>© 2026 — Ineza Aime Bruno</span>
-    <span>100% Browser – No API – Works Offline</span>
-  </footer>
-</div>
 
 <script>
 // ────────────────────────────────────────────────
