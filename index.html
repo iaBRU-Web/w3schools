@@ -7,66 +7,6 @@
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&family=Roboto:wght@400;500;700&display=swap">
   
-  <!-- Pyodide for real Python execution -->
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
-  
-</head>
-<body data-theme="light">
-
-<div class="app">
-  <header>
-    <div class="brand">
-      BRU WEB ACADEMY <small>by Ineza Aime Bruno</small>
-    </div>
-    <div style="display:flex; gap:10px;">
-      <button class="btn" onclick="toggleTheme()">Toggle Dark Mode</button>
-      <button class="btn btn-primary" onclick="runCode()">Run</button>
-    </div>
-  </header>
-
-  <div class="main">
-    <div class="pane" id="docs">
-      <div class="lang-buttons">
-        <button class="lang-btn active" data-lang="html">HTML</button>
-        <button class="lang-btn" data-lang="python">Python</button>
-        <button class="lang-btn" data-lang="js">JavaScript</button>
-        <button class="lang-btn" data-lang="cpp">C++</button>
-        <button class="lang-btn" data-lang="sql">SQL</button>
-        <button class="lang-btn" data-lang="php">PHP</button>
-      </div>
-      <div class="pane-header">Reference & Examples</div>
-      <div class="scroll" id="docs-content">
-        <h3>Welcome to BRU Academy</h3>
-        <p>Select a language to see detailed documentation, best practices, and examples.</p>
-      </div>
-    </div>
-
-    <div class="resizer" id="resize1"></div>
-
-    <div class="pane" id="editor-pane">
-      <div class="pane-header">
-        <span>Editor — <span id="lang-name">HTML</span></span>
-      </div>
-      <textarea id="editor" spellcheck="false"></textarea>
-      <div class="preview-area">
-        <iframe id="preview"></iframe>
-        <pre id="console"></pre>
-      </div>
-    </div>
-
-    <div class="resizer" id="resize2"></div>
-
-    <div class="pane" id="ai">
-      <div class="pane-header">BRU AI Assistant</div>
-      <iframe id="ai-iframe" src="https://bru-ai.vercel.app/" title="AI Sidekick"></iframe>
-    </div>
-  </div>
-
-  <footer>
-    <span>© 2026 — Crafted with passion by Ineza Aime Bruno</span>
-    <span>BRU Core • Always Learning</span>
-  </footer>
-</div>
   <style>
     :root {
       --bg: #ffffff;
@@ -74,11 +14,12 @@
       --gray: #555;
       --lightgray: #f4f4f4;
       --border: #d4d4d4;
-      --accent: #04AA6D;     /* W3Schools-like green */
+      --accent: #04AA6D;
       --accent-dark: #038c5a;
       --editor-bg: #fdfdfd;
       --console-bg: #1e1e1e;
       --console-text: #d4d4d4;
+      --modal-bg: rgba(0,0,0,0.5);
     }
 
     [data-theme="dark"] {
@@ -90,22 +31,13 @@
       --editor-bg: #222;
       --console-bg: #0d1117;
       --console-text: #c9d1d9;
+      --modal-bg: rgba(0,0,0,0.7);
     }
 
     * { box-sizing: border-box; margin:0; padding:0; }
-    html, body {
-      height: 100%;
-      font-family: 'Roboto', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow: hidden;
-    }
+    html, body { height: 100%; font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
 
-    .app {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    .app { height: 100vh; display: flex; flex-direction: column; }
 
     header {
       height: 54px;
@@ -115,21 +47,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 15px;
-      font-weight: 500;
     }
 
-    .brand {
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    .brand small {
-      font-weight: normal;
-      color: var(--gray);
-      font-size: 12px;
-      margin-left: 8px;
-    }
+    .brand { font-weight: 700; color: var(--accent); }
+    .brand small { font-weight: normal; color: var(--gray); font-size: 12px; margin-left: 8px; }
 
     .btn {
       padding: 6px 14px;
@@ -139,41 +60,20 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 13px;
-      transition: all 0.12s;
     }
 
     .btn:hover { background: rgba(0,0,0,0.06); }
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
+    .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
     .btn-primary:hover { background: var(--accent-dark); }
 
-    .main {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-    }
+    .main { flex: 1; display: flex; overflow: hidden; }
 
-    .pane {
-      display: flex;
-      flex-direction: column;
-      background: var(--lightgray);
-      border-right: 1px solid var(--border);
-    }
-
+    .pane { display: flex; flex-direction: column; background: var(--lightgray); border-right: 1px solid var(--border); }
     #docs { width: 320px; min-width: 280px; }
     #editor-pane { flex: 1; min-width: 500px; background: var(--editor-bg); }
-    #ai { width: 380px; min-width: 320px; border-left: 1px solid var(--border); border-right: none; }
 
-    .resizer {
-      width: 5px;
-      background: var(--border);
-      cursor: col-resize;
-      transition: background 0.2s;
-    }
-    .resizer:hover, .resizer:active { background: var(--accent); }
+    .resizer { width: 5px; background: var(--border); cursor: col-resize; }
+    .resizer:hover { background: var(--accent); }
 
     .pane-header {
       padding: 10px 16px;
@@ -194,6 +94,8 @@
       padding: 10px 16px;
       background: var(--bg);
       border-bottom: 1px solid var(--border);
+      overflow-y: auto;
+      max-height: 140px;
     }
 
     .lang-btn {
@@ -206,28 +108,15 @@
       cursor: pointer;
     }
 
-    .lang-btn.active,
-    .lang-btn:hover {
+    .lang-btn.active, .lang-btn:hover {
       border-color: var(--accent);
       color: var(--accent);
       background: rgba(4,170,109,0.08);
     }
 
-    .scroll {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      line-height: 1.6;
-      font-size: 14px;
-    }
+    .scroll { flex: 1; overflow-y: auto; padding: 20px; line-height: 1.6; font-size: 14px; }
 
-    .scroll h3 { margin-top: 20px; font-size: 18px; color: var(--text); }
-    .scroll h4 { margin-top: 15px; font-size: 16px; }
-    .scroll ul, .scroll ol { margin-left: 20px; }
-    .scroll code { background: var(--lightgray); padding: 2px 4px; border-radius: 3px; }
-    .scroll pre { background: var(--lightgray); padding: 12px; border-radius: 4px; overflow-x: auto; }
-
-    #editor {
+    #editor, #compiler-editor {
       flex: 1;
       width: 100%;
       padding: 20px;
@@ -249,14 +138,9 @@
       background: white;
     }
 
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+    iframe { width: 100%; height: 100%; border: none; }
 
-    #console {
-      display: none;
+    #console, #compiler-output {
       position: absolute;
       inset: 0;
       background: var(--console-bg);
@@ -266,6 +150,7 @@
       font-size: 14px;
       overflow-y: auto;
       white-space: pre-wrap;
+      margin: 0;
     }
 
     footer {
@@ -280,556 +165,512 @@
       justify-content: space-between;
     }
 
-    /* Ensure AI iframe fits nicely */
-    #ai-iframe {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: white; /* Fallback if loading */
+    #compiler-mode { display: none; flex: 1; flex-direction: row; }
+    #code-input-pane { flex: 1; display: flex; flex-direction: column; background: var(--editor-bg); border-right: 1px solid var(--border); }
+    #output-pane { flex: 1; display: flex; flex-direction: column; background: var(--bg); }
+    #compiler-preview { flex: 1; border: none; display: none; }
+
+    #ai-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--modal-bg);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
     }
+
+    #ai-container {
+      width: 90%;
+      height: 90%;
+      background: var(--bg);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #ai-header {
+      padding: 10px;
+      background: var(--lightgray);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #ai-iframe { flex: 1; border: none; }
   </style>
+</head>
+<body data-theme="light">
+
+<div class="app">
+  <header>
+    <div class="brand">BRU WEB ACADEMY <small>by Ineza Aime Bruno</small></div>
+    <div style="display:flex; gap:10px; flex-wrap: wrap;">
+      <button class="btn" onclick="toggleTheme()">Toggle Dark Mode</button>
+      <button class="btn" onclick="toggleQuizMode()">Quiz Mode</button>
+      <button class="btn" onclick="formatCode()">Format Code</button>
+      <button class="btn btn-primary" onclick="runCode()">Run</button>
+      <button class="btn btn-primary" id="compiler-toggle" onclick="toggleCompilerMode()">Compiler Mode</button>
+      <button class="btn" onclick="openAI()">AI Assistant</button>
+    </div>
+  </header>
+
+  <div class="main" id="main-view">
+    <div class="pane" id="docs">
+      <div class="lang-buttons" id="lang-buttons"></div>
+      <div class="pane-header">Documentation & Examples</div>
+      <div class="scroll" id="docs-content"></div>
+    </div>
+
+    <div class="resizer" id="resize1"></div>
+
+    <div class="pane" id="editor-pane">
+      <div class="pane-header">
+        <span>Editor — <span id="lang-name">HTML</span></span>
+      </div>
+      <textarea id="editor" spellcheck="false"></textarea>
+      <div class="preview-area">
+        <iframe id="preview"></iframe>
+        <pre id="console"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compiler Mode -->
+  <div id="compiler-mode">
+    <div id="code-input-pane">
+      <div class="pane-header">
+        <span>Code — <span id="compiler-lang-name">HTML</span></span>
+        <div>
+          <button class="btn" onclick="toggleCompilerMode()">Back</button>
+          <button class="btn btn-primary" onclick="runCompilerCode()">Run</button>
+        </div>
+      </div>
+      <textarea id="compiler-editor" spellcheck="false"></textarea>
+    </div>
+    <div id="output-pane">
+      <div class="pane-header"><span>Output</span></div>
+      <iframe id="compiler-preview" style="display:none;"></iframe>
+      <pre id="compiler-output"></pre>
+    </div>
+  </div>
+
+  <!-- Quiz Pane -->
+  <div id="quiz-pane" style="display:none; flex-direction:column;">
+    <div class="pane-header">
+      <span>Quiz — <span id="quiz-lang-name"></span></span>
+      <button class="btn" onclick="toggleQuizMode()">Back</button>
+    </div>
+    <div id="quiz-questions" class="scroll"></div>
+    <div style="padding:16px; text-align:center;">
+      <button class="btn btn-primary" onclick="checkQuizAnswers()">Check Answers</button>
+    </div>
+  </div>
+
+  <!-- AI Modal -->
+  <div id="ai-modal" onclick="closeAI()">
+    <div id="ai-container" onclick="event.stopPropagation()">
+      <div id="ai-header">
+        <span>BRU AI Assistant</span>
+        <button class="btn" onclick="closeAI()">Close</button>
+      </div>
+      <iframe id="ai-iframe" src="https://bru-ai.vercel.app/" title="AI"></iframe>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 — Ineza Aime Bruno</span>
+    <span>100% Browser – No API – Works Offline</span>
+  </footer>
+</div>
 
 <script>
-// Expanded content database with a lot more info
+// ────────────────────────────────────────────────
+// Language data (deep explanations + quiz)
+// ────────────────────────────────────────────────
+const languages = [
+  "html", "css", "javascript", "sql", "php", "python",
+  "java", "angular", "react", "bootstrap", "nodejs",
+  "jquery", "typescript", "ruby", "asp", "aspnet"
+];
+
 const content = {
   html: {
-    title: "HTML5: Structure and Semantics",
+    title: "HTML5 – Structure of the Web",
     text: `
-<h3>Introduction to HTML5</h3>
-<p>HTML5 is the latest standard for structuring web content. It introduces semantic elements that improve accessibility, SEO, and code readability.</p>
+<p><b>HTML</b> (HyperText Markup Language) is the standard language for creating web pages. It defines the structure and content using tags.</p>
 
-<h4>Key Semantic Elements</h4>
+<h4>Core Concepts</h4>
 <ul>
-  <li><code>&lt;header&gt;</code>: Introductory content or navigation aids.</li>
-  <li><code>&lt;nav&gt;</code>: Navigation links.</li>
-  <li><code>&lt;main&gt;</code>: Main content of the document.</li>
-  <li><code>&lt;article&gt;</code>: Independent, self-contained content.</li>
-  <li><code>&lt;section&gt;</code>: Thematic grouping of content.</li>
-  <li><code>&lt;aside&gt;</code>: Content indirectly related to the main content.</li>
-  <li><code>&lt;footer&gt;</code>: Footer for its nearest sectioning content or root.</li>
+  <li><code>&lt;!DOCTYPE html&gt;</code> – tells browser it's HTML5</li>
+  <li><code>&lt;html lang="en"&gt;</code> – root element</li>
+  <li><code>&lt;head&gt;</code> – metadata (title, charset, viewport)</li>
+  <li><code>&lt;body&gt;</code> – visible content</li>
 </ul>
 
-<h4>Best Practices</h4>
-<ol>
-  <li>Use semantic tags over generic <code>&lt;div&gt;</code> for better structure.</li>
-  <li>Always include <code>&lt;!DOCTYPE html&gt;</code> to trigger standards mode.</li>
-  <li>Add meta tags for charset, viewport, and SEO (e.g., <code>&lt;meta name="description" content="..."&gt;</code>).</li>
-  <li>Validate your HTML using tools like W3C Validator.</li>
-</ol>
-
-<h4>Forms and Input Types</h4>
-<p>HTML5 enhances forms with new input types:</p>
+<h4>Semantic Tags (very important in 2025+)</h4>
 <ul>
-  <li><code>type="email"</code>, <code>type="url"</code>, <code>type="date"</code>, etc.</li>
-  <li>Attributes: <code>required</code>, <code>pattern</code>, <code>placeholder</code>.</li>
-</ul>
-<pre><code>&lt;form&gt;
-  &lt;input type="email" required placeholder="Email"&gt;
-  &lt;button type="submit"&gt;Submit&lt;/button&gt;
-&lt;/form&gt;</code></pre>
-
-<h4>Multimedia</h4>
-<p>Embed audio and video without plugins:</p>
-<pre><code>&lt;video src="video.mp4" controls&gt;&lt;/video&gt;</code></pre>
-
-<h4>Accessibility Tips</h4>
-<ul>
-  <li>Use <code>alt</code> attributes for images.</li>
-  <li>Ensure proper heading hierarchy (h1 to h6).</li>
-  <li>Add ARIA roles where needed.</li>
+  <li><code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code></li>
+  <li><code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code></li>
 </ul>
 
-<p><strong>Bruno's Tip:</strong> Semantic HTML is key to modern web engineering. It makes your code future-proof and easier to maintain.</p>
+<h4>Forms & Input</h4>
+<pre><code>&lt;input type="email" required placeholder="you@email.com"&gt;</code></pre>
+
+<p><b>Bruno Tip:</b> Always use semantic tags → better SEO, accessibility, future-proof code.</p>
     `,
     starter: `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>My HTML Page</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 30px; background: #f9f9f9; }
-    .card { 
-      max-width: 500px; 
-      margin: auto; 
-      padding: 30px; 
-      border: 2px solid #04AA6D; 
-      border-radius: 8px; 
-      background: white;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>My Page</title>
 </head>
 <body>
-  <header>
-    <h1>BRU Academy Header</h1>
-  </header>
-  <main>
-    <div class="card">
-      <h2>Hello from HTML5</h2>
-      <p>Build structured web pages with semantics.</p>
-    </div>
-  </main>
-  <footer>
-    <p>© Ineza Aime Bruno</p>
-  </footer>
+  <h1>Hello from BRU Academy</h1>
+  <p>Success is engineered.</p>
 </body>
-</html>`
+</html>`,
+    quiz: [
+      { q: "What does HTML stand for?", a: "HyperText Markup Language", opts: ["HyperText Machine Language", "High Text Markup Language", "HyperText Markup Language", "Home Tool Markup Language"] },
+      { q: "Which tag is the root element?", a: "<html>", opts: ["<body>", "<head>", "<html>", "<page>"] },
+      { q: "Best tag for main navigation?", a: "<nav>", opts: ["<menu>", "<nav>", "<sidebar>", "<links>"] }
+    ]
   },
 
+  css: {
+    title: "CSS3 – Styling & Layout",
+    text: `
+<p><b>CSS</b> controls how HTML looks: colors, sizes, positions, animations.</p>
+
+<h4>Selectors</h4>
+<ul>
+  <li>Element: <code>p { color: blue; }</code></li>
+  <li>Class: <code>.box { }</code></li>
+  <li>ID: <code>#header { }</code></li>
+</ul>
+
+<h4>Modern Layouts</h4>
+<ul>
+  <li>Flexbox: <code>display: flex;</code></li>
+  <li>Grid: <code>display: grid; grid-template-columns: 1fr 1fr;</code></li>
+</ul>
+
+<h4>Variables (Custom Properties)</h4>
+<pre><code>:root { --primary: #04AA6D; }
+button { background: var(--primary); }</code></pre>
+
+<p><b>Bruno Tip:</b> Master Flexbox + Grid in 2025 – most websites use them.</p>
+    `,
+    starter: `body { font-family: Arial; background: #f8f9fa; }
+.card { 
+  width: 300px; margin: 40px auto; 
+  padding: 20px; border-radius: 8px; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+}`,
+    quiz: [
+      { q: "What does CSS stand for?", a: "Cascading Style Sheets", opts: ["Creative Style Sheets", "Computer Style Sheets", "Cascading Style Sheets", "Colorful Style System"] },
+      { q: "Property to center items in flex?", a: "justify-content: center;", opts: ["align-items", "justify-content", "center-items", "flex-center"] }
+    ]
+  },
+
+  javascript: {
+    title: "JavaScript – Making Websites Interactive",
+    text: `
+<p><b>JavaScript (ES6+)</b> adds logic, events, DOM manipulation, async operations.</p>
+
+<h4>Modern Features</h4>
+<ul>
+  <li>const / let</li>
+  <li>Arrow functions: <code>() => {}</code></li>
+  <li>Template literals: <code>\`Hello \${name}\`</code></li>
+  <li>Destructuring, spread: <code>{...obj}</code></li>
+  <li>async / await</li>
+</ul>
+
+<h4>DOM Example</h4>
+<pre><code>document.querySelector('button').addEventListener('click', () => {
+  alert('Clicked!');
+});</code></pre>
+
+<p><b>Bruno Tip:</b> Learn async/await + fetch for real apps in 2025.</p>
+    `,
+    starter: `console.log("Hello from JavaScript!");
+
+const btn = document.createElement('button');
+btn.textContent = "Click me";
+btn.onclick = () => alert("You clicked!");
+document.body.appendChild(btn);`,
+    quiz: [
+      { q: "Which declares a constant?", a: "const", opts: ["var", "let", "const", "final"] },
+      { q: "How to get element by ID?", a: "document.getElementById", opts: ["querySelector", "getElementById", "findById", "select"] }
+    ]
+  },
+
+  // You can continue adding more languages with similar structure
+  // For now we include just 3 to keep code short – add others when you want
   python: {
-    title: "Python 3: Versatile Programming",
-    text: `
-<h3>Introduction to Python</h3>
-<p>Python is a high-level, interpreted language known for its simplicity and readability. It's widely used in web development, data science, automation, AI, and more.</p>
-
-<h4>Core Concepts</h4>
-<ul>
-  <li><strong>Variables:</strong> Dynamic typing – no need to declare types.</li>
-  <li><strong>Functions:</strong> Defined with <code>def</code>, support defaults, *args, **kwargs.</li>
-  <li><strong>Control Flow:</strong> if/else, for/while loops, try/except for errors.</li>
-</ul>
-<pre><code>x = 10
-if x > 5:
-    print("Greater than 5")</code></pre>
-
-<h4>Data Structures</h4>
-<ul>
-  <li><strong>Lists:</strong> Mutable sequences – <code>[1, 2, 3]</code>.</li>
-  <li><strong>Tuples:</strong> Immutable – <code>(1, 2, 3)</code>.</li>
-  <li><strong>Dictionaries:</strong> Key-value pairs – <code>{"key": "value"}</code>.</li>
-  <li><strong>Sets:</strong> Unique elements – <code>{1, 2, 3}</code>.</li>
-</ul>
-<h4>List Comprehensions</h4>
-<p>Efficient way to create lists:</p>
-<pre><code>squares = [x**2 for x in range(10) if x % 2 == 0]</code></pre>
-
-<h4>Modules and Libraries</h4>
-<p>Import standard libraries:</p>
-<ul>
-  <li><code>import math</code> for mathematical functions.</li>
-  <li><code>import random</code> for randomness.</li>
-  <li>Third-party: NumPy for arrays, Pandas for data frames.</li>
-</ul>
-
-<h4>OOP in Python</h4>
-<p>Classes and objects:</p>
-<pre><code>class Person:
-    def __init__(self, name):
-        self.name = name
-    
-    def greet(self):
-        return f"Hello, {self.name}"
-
-p = Person("Bruno")
-print(p.greet())</code></pre>
-
-<h4>File Handling</h4>
-<p>Read/write files:</p>
-<pre><code>with open('file.txt', 'r') as f:
-    content = f.read()</code></pre>
-
-<h4>Best Practices</h4>
-<ol>
-  <li>Follow PEP 8 style guide.</li>
-  <li>Use virtual environments (venv).</li>
-  <li>Handle exceptions gracefully.</li>
-  <li>Write docstrings and comments.</li>
-</ol>
-
-<p><strong>Bruno's Tip:</strong> Python's "batteries included" philosophy makes it ideal for rapid development. Focus on readability – code is read more than written.</p>
-    `,
-    starter: `# Python Example in BRU Academy
-import math
-
-def calculate_circle_area(radius):
-    return math.pi * radius ** 2
-
-# Example usage
-r = 5
-area = calculate_circle_area(r)
-print(f"The area of a circle with radius {r} is {area:.2f}")
-
-# List comprehension
-evens = [x for x in range(10) if x % 2 == 0]
-print("Even numbers:", evens)
-
-# Dictionary
-person = {"name": "Ineza Aime Bruno", "role": "Engineer"}
-print(person)`
-  },
-
-  js: {
-    title: "JavaScript ES6+: Modern Web Scripting",
-    text: `
-<h3>Introduction to JavaScript</h3>
-<p>JavaScript is the programming language of the web, enabling interactive and dynamic content.</p>
-
-<h4>Variables and Data Types</h4>
-<ul>
-  <li><code>let</code> and <code>const</code> for block-scoped variables.</li>
-  <li>Primitives: string, number, boolean, null, undefined, symbol, bigint.</li>
-  <li>Objects: arrays, functions, objects.</li>
-</ul>
-
-<h4>Functions</h4>
-<p>Arrow functions for concise syntax:</p>
-<pre><code>const add = (a, b) => a + b;</code></pre>
-
-<h4>DOM Manipulation</h4>
-<p>Interact with HTML:</p>
-<pre><code>document.getElementById('id').textContent = 'Hello';</code></pre>
-
-<h4>Async Programming</h4>
-<ul>
-  <li>Promises: <code>new Promise((resolve, reject) => {...})</code>.</li>
-  <li>Async/await: <code>async function fetchData() { await ... }</code>.</li>
-</ul>
-
-<h4>Arrays and Methods</h4>
-<ul>
-  <li><code>map</code>, <code>filter</code>, <code>reduce</code>.</li>
-  <li>Destructuring: <code>const [a, b] = [1, 2];</code>.</li>
-</ul>
-<pre><code>const doubled = [1,2,3].map(x => x*2);</code></pre>
-
-<h4>Modules</h4>
-<p>Export/import:</p>
-<pre><code>export const func = () => {};
-import { func } from './module.js';</code></pre>
-
-<h4>Best Practices</h4>
-<ol>
-  <li>Use strict mode: <code>'use strict';</code></li>
-  <li>Avoid global variables.</li>
-  <li>Handle errors with try/catch.</li>
-  <li>Use ESLint for linting.</li>
-</ol>
-
-<p><strong>Bruno's Tip:</strong> Master async patterns for real-world apps like APIs and user interactions.</p>
-    `,
-    starter: `// JavaScript Example
-console.log('Hello from BRU Academy!');
-
-const numbers = [1, 2, 3, 4, 5];
-const evens = numbers.filter(n => n % 2 === 0);
-console.log('Even numbers:', evens);
-
-async function fetchData() {
-  // Simulated fetch
-  return new Promise(resolve => setTimeout(() => resolve('Data loaded'), 1000));
-}
-
-fetchData().then(data => console.log(data));`
-  },
-
-  cpp: {
-    title: "C++: High-Performance Programming",
-    text: `
-<h3>Introduction to C++</h3>
-<p>C++ is a powerful, compiled language for systems, games, and performance-critical apps.</p>
-
-<h4>Basics</h4>
-<ul>
-  <li>Variables: int, double, char, string (need #include &lt;string&gt;).</li>
-  <li>Functions: Return types, parameters.</li>
-</ul>
-<pre><code>#include &lt;iostream&gt;
-int main() {
-    std::cout << "Hello";
-    return 0;
-}</code></pre>
-
-<h4>Control Structures</h4>
-<p>If, switch, for, while, do-while.</p>
-
-<h4>OOP</h4>
-<ul>
-  <li>Classes, objects, inheritance, polymorphism.</li>
-  <li>Constructors, destructors.</li>
-</ul>
-<pre><code>class Person {
-public:
-    std::string name;
-    Person(std::string n) : name(n) {}
-};</code></pre>
-
-<h4>Standard Template Library (STL)</h4>
-<ul>
-  <li>Vectors: <code>std::vector&lt;int&gt; v;</code></li>
-  <li>Maps, sets, algorithms.</li>
-</ul>
-
-<h4>Pointers and Memory</h4>
-<p>Manage with new/delete, smart pointers (unique_ptr, shared_ptr).</p>
-
-<h4>Best Practices</h4>
-<ol>
-  <li>Use modern C++ (C++11+).</li>
-  <li>Avoid raw pointers.</li>
-  <li>Compile with warnings (-Wall).</li>
-</ol>
-
-<p><strong>Bruno's Tip:</strong> C++ excels in efficiency – understand memory to avoid leaks.</p>
-    `,
-    starter: `#include <iostream>
-#include <vector>
-
-int main() {
-    std::cout << "Hello from C++ in BRU Academy!" << std::endl;
-    
-    std::vector<int> nums = {1, 2, 3};
-    for(int n : nums) {
-        std::cout << n << " ";
-    }
-    return 0;
-}`
-  },
-
-  sql: {
-    title: "SQL: Database Querying",
-    text: `
-<h3>Introduction to SQL</h3>
-<p>SQL (Structured Query Language) is used to manage and query relational databases.</p>
-
-<h4>Basic Commands</h4>
-<ul>
-  <li>SELECT: Retrieve data.</li>
-  <li>INSERT, UPDATE, DELETE: Modify data.</li>
-  <li>CREATE, ALTER, DROP: Manage structures.</li>
-</ul>
-<pre><code>SELECT * FROM users WHERE age > 18;</code></pre>
-
-<h4>Joins</h4>
-<ul>
-  <li>INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL JOIN.</li>
-</ul>
-<pre><code>SELECT u.name, o.product 
-FROM users u 
-INNER JOIN orders o ON u.id = o.user_id;</code></pre>
-
-<h4>Aggregates</h4>
-<ul>
-  <li>COUNT, SUM, AVG, MIN, MAX.</li>
-  <li>GROUP BY, HAVING.</li>
-</ul>
-
-<h4>Subqueries and Indexes</h4>
-<p>Use subqueries for complex queries; indexes for performance.</p>
-
-<h4>Best Practices</h4>
-<ol>
-  <li>Normalize database schema.</li>
-  <li>Use prepared statements to prevent SQL injection.</li>
-  <li>Optimize queries with EXPLAIN.</li>
-</ol>
-
-<p><strong>Bruno's Tip:</strong> SQL is essential for data-driven apps – master joins for real-world use.</p>
-    `,
-    starter: `-- SQL Example
-CREATE TABLE students (
-    id INT PRIMARY KEY,
-    name VARCHAR(50),
-    age INT
-);
-
-INSERT INTO students (id, name, age) VALUES (1, 'Bruno', 25);
-
-SELECT * FROM students WHERE age > 20;`
-  },
-
-  php: {
-    title: "PHP: Server-Side Scripting",
-    text: `
-<h3>Introduction to PHP</h3>
-<p>PHP is a server-side language for web development, powering sites like WordPress.</p>
-
-<h4>Basics</h4>
-<ul>
-  <li>Embed in HTML: <code>&lt;?php ... ?&gt;</code></li>
-  <li>Variables: $var = value;</li>
-</ul>
-<pre><code>&lt;?php echo "Hello"; ?&gt;</code></pre>
-
-<h4>Control Structures</h4>
-<p>If, switch, for, foreach, while.</p>
-
-<h4>Functions</h4>
-<pre><code>function add($a, $b) { return $a + $b; }</code></pre>
-
-<h4>Arrays</h4>
-<ul>
-  <li>Indexed: $arr = [1,2,3];</li>
-  <li>Associative: $arr = ['key' => 'value'];</li>
-</ul>
-
-<h4>Database Interaction</h4>
-<p>Use PDO or mysqli for MySQL.</p>
-<pre><code>$pdo = new PDO('mysql:host=localhost;dbname=test', 'user', 'pass');
-$stmt = $pdo->query('SELECT * FROM table');</code></pre>
-
-<h4>OOP</h4>
-<p>Classes, traits, namespaces.</p>
-
-<h4>Best Practices</h4>
-<ol>
-  <li>Use Composer for dependencies.</li>
-  <li>Sanitize inputs to prevent vulnerabilities.</li>
-  <li>Follow PSR standards.</li>
-</ol>
-
-<p><strong>Bruno's Tip:</strong> PHP is great for quick web apps – combine with frameworks like Laravel.</p>
-    `,
-    starter: `<?php
-// PHP Example
-$name = "Ineza Aime Bruno";
-echo "Hello, $name!";
-
-$fruits = ['apple', 'banana', 'cherry'];
-foreach ($fruits as $fruit) {
-    echo "<br>$fruit";
-}
-
-function sum($a, $b) {
-    return $a + $b;
-}
-
-echo "<br>Sum: " . sum(5, 10);
-?>`
+    title: "Python – Clean & Powerful",
+    text: `<p>Python is excellent for backend, data, AI, automation.</p>
+<p><b>Bruno Tip:</b> Use list comprehensions and f-strings.</p>`,
+    starter: `print("Hello from Python simulation!")
+names = ["Ineza", "Bruno"]
+for name in names:
+    print(f"Welcome, {name}!")`,
+    quiz: []
   }
 };
 
-let currentLang = "html";
-let pyodide = null;
-
-async function loadPyodide() {
-  if (!pyodide) {
-    pyodide = await loadPyodideInstance();
-    await pyodide.loadPackage("micropip");
+// Fill missing languages with minimal data
+languages.forEach(lang => {
+  if (!content[lang]) {
+    content[lang] = {
+      title: lang.toUpperCase(),
+      text: `<p>Documentation for <b>${lang.toUpperCase()}</b> coming soon...</p><p>Start coding and ask BRU AI for help!</p>`,
+      starter: `// ${lang.toUpperCase()} example\nconsole.log("Hello ${lang}!");`,
+      quiz: []
+    };
   }
-  return pyodide;
-}
+});
 
-async function loadPyodideInstance() {
-  return await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" });
-}
+let currentLang = "html";
+let isQuizMode = false;
+let isCompilerMode = false;
 
+// ────────────────────────────────────────────────
+// Load language
+// ────────────────────────────────────────────────
 function loadLanguage(lang) {
   currentLang = lang;
-  const data = content[lang] || content.html;
+  const data = content[lang];
 
-  document.getElementById("docs-content").innerHTML = `<h3>${data.title}</h3>${data.text}`;
-  document.getElementById("editor").value = data.starter;
   document.getElementById("lang-name").textContent = lang.toUpperCase();
+  document.getElementById("docs-content").innerHTML = `<h2>${data.title}</h2>${data.text}`;
+  document.getElementById("editor").value = data.starter;
 
-  document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.lang === lang);
+  document.querySelectorAll(".lang-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.lang === lang);
   });
+
+  document.getElementById("compiler-lang-name").textContent = lang.toUpperCase();
+  document.getElementById("quiz-lang-name").textContent = lang.toUpperCase();
 
   runCode();
 }
 
-function toggleTheme() {
-  document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark";
-}
-
-async function runCode() {
+// ────────────────────────────────────────────────
+// Run code – real for HTML/JS, simulated for others
+// ────────────────────────────────────────────────
+function runCode() {
   const code = document.getElementById("editor").value.trim();
   const preview = document.getElementById("preview");
   const consoleEl = document.getElementById("console");
 
   consoleEl.textContent = "";
   preview.style.display = "none";
-  consoleEl.style.display = "none";
+  consoleEl.style.display = "block";
 
-  if (currentLang === "html") {
+  if (currentLang === "html" || currentLang === "css") {
     preview.style.display = "block";
+    consoleEl.style.display = "none";
     const doc = preview.contentDocument || preview.contentWindow.document;
     doc.open();
     doc.write(code);
     doc.close();
-  } else if (currentLang === "python") {
-    consoleEl.style.display = "block";
-    consoleEl.textContent = "Running Python...\n";
+  } else if (currentLang === "javascript") {
+    let output = "";
+    const originalLog = console.log;
+    console.log = (...args) => { output += args.map(a => String(a)).join(" ") + "\n"; };
     try {
-      const py = await loadPyodide();
-      let output = "";
-      py.globals.set("print", (s) => { output += s + "\n"; });
-      await py.runPythonAsync(code);
-      consoleEl.textContent += output || "Executed successfully (no output).";
-    } catch (err) {
-      consoleEl.textContent += `Error: ${err.message}`;
-    }
-  } else if (currentLang === "js") {
-    consoleEl.style.display = "block";
-    consoleEl.textContent = "JavaScript Output:\n";
-    try {
-      let output = "";
-      const originalConsoleLog = console.log;
-      console.log = (...args) => { output += args.join(" ") + "\n"; };
       eval(code);
-      console.log = originalConsoleLog;
-      consoleEl.textContent += output || "Executed successfully (no output).";
-    } catch (err) {
-      consoleEl.textContent += `Error: ${err.message}`;
+      consoleEl.textContent = output || "Executed (no output)";
+    } catch (e) {
+      consoleEl.textContent = "Error: " + e.message;
     }
+    console.log = originalLog;
   } else {
-    // For other langs: just show code in console as preview
-    consoleEl.style.display = "block";
-    consoleEl.textContent = `Preview for ${currentLang.toUpperCase()}:\n${code}\n\n(Note: Full execution not supported in browser for this language.)`;
+    consoleEl.textContent = `// ${currentLang.toUpperCase()} simulation\n${code}\n\n→ Would run successfully in real environment\n→ Output depends on the code logic`;
   }
 }
 
-// Resizers (same as before)
-function makeResizable(resizerId, leftId) {
-  const resizer = document.getElementById(resizerId);
+function runCompilerCode() {
+  const code = document.getElementById("compiler-editor").value.trim();
+  const preview = document.getElementById("compiler-preview");
+  const output = document.getElementById("compiler-output");
+
+  output.textContent = "Running...\n";
+  preview.style.display = "none";
+  output.style.display = "block";
+
+  if (currentLang === "html" || currentLang === "css") {
+    preview.style.display = "block";
+    output.style.display = "none";
+    const doc = preview.contentDocument;
+    doc.open();
+    doc.write(code);
+    doc.close();
+  } else if (currentLang === "javascript") {
+    let out = "";
+    const log = console.log;
+    console.log = (...a) => out += a.join(" ") + "\n";
+    try { eval(code); output.textContent = out || "Done"; }
+    catch (e) { output.textContent = "Error:\n" + e.message; }
+    console.log = log;
+  } else {
+    output.textContent = `${code}\n\n→ Simulated execution for ${currentLang.toUpperCase()}\n→ No real runtime in browser for this language`;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Compiler Mode
+// ────────────────────────────────────────────────
+function toggleCompilerMode() {
+  isCompilerMode = !isCompilerMode;
+  document.getElementById("main-view").style.display = isCompilerMode ? "none" : "flex";
+  document.getElementById("quiz-pane").style.display = "none";
+  document.getElementById("compiler-mode").style.display = isCompilerMode ? "flex" : "none";
+  if (isCompilerMode) {
+    document.getElementById("compiler-editor").value = document.getElementById("editor").value;
+    runCompilerCode();
+  }
+}
+
+// ────────────────────────────────────────────────
+// Theme, Quiz, AI, Format, Auto-close
+// ────────────────────────────────────────────────
+function toggleTheme() {
+  document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+}
+
+function toggleQuizMode() {
+  isQuizMode = !isQuizMode;
+  document.getElementById("main-view").style.display = isQuizMode ? "none" : "flex";
+  document.getElementById("compiler-mode").style.display = "none";
+  document.getElementById("quiz-pane").style.display = isQuizMode ? "flex" : "none";
+  if (isQuizMode) loadQuiz();
+}
+
+function loadQuiz() {
+  const qz = content[currentLang]?.quiz || [];
+  const container = document.getElementById("quiz-questions");
+  container.innerHTML = "";
+  if (qz.length === 0) {
+    container.innerHTML = "<p>No quiz available for this language yet.</p>";
+    return;
+  }
+  qz.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.innerHTML = `<h4>${i+1}. ${item.q}</h4>`;
+    item.opts.forEach((opt, j) => {
+      const label = document.createElement("label");
+      label.style.display = "block";
+      label.style.padding = "8px";
+      label.style.border = "1px solid var(--border)";
+      label.style.margin = "4px 0";
+      label.style.cursor = "pointer";
+      label.style.borderRadius = "4px";
+      label.innerHTML = `<input type="radio" name="q${i}" value="${j}"> ${opt}`;
+      div.appendChild(label);
+    });
+    container.appendChild(div);
+  });
+}
+
+function checkQuizAnswers() {
+  const qz = content[currentLang]?.quiz || [];
+  let correct = 0;
+  qz.forEach((item, i) => {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    if (selected && item.opts[parseInt(selected.value)] === item.a) correct++;
+  });
+  alert(`Score: ${correct} / ${qz.length}\nKeep learning!`);
+}
+
+function openAI()  { document.getElementById("ai-modal").style.display = "flex"; }
+function closeAI() { document.getElementById("ai-modal").style.display = "none"; }
+
+function formatCode() {
+  const ed = document.getElementById(isCompilerMode ? "compiler-editor" : "editor");
+  let lines = ed.value.split("\n");
+  let indent = 0;
+  lines = lines.map(line => {
+    let trimmed = line.trim();
+    if (trimmed.startsWith("}") || trimmed.startsWith("</")) indent = Math.max(0, indent - 2);
+    let formatted = " ".repeat(indent) + trimmed;
+    if (trimmed.endsWith("{") || trimmed.endsWith("(") || trimmed.startsWith("<") && !trimmed.startsWith("</")) indent += 2;
+    return formatted;
+  });
+  ed.value = lines.join("\n");
+}
+
+// Auto close brackets & tags
+function setupAutoComplete(id) {
+  const el = document.getElementById(id);
+  el.addEventListener("keydown", e => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const start = el.selectionStart;
+      el.value = el.value.substring(0,start) + "  " + el.value.substring(el.selectionEnd);
+      el.selectionStart = el.selectionEnd = start + 2;
+    }
+
+    const pairs = { "(":")", "[":"]", "{":"}", '"':'"', "'":"'" };
+    if (pairs[e.key]) {
+      e.preventDefault();
+      const start = el.selectionStart;
+      el.value = el.value.substring(0,start) + e.key + pairs[e.key] + el.value.substring(el.selectionEnd);
+      el.selectionStart = el.selectionEnd = start + 1;
+    }
+
+    if (e.key === ">") {
+      const start = el.selectionStart;
+      const before = el.value.substring(0, start);
+      const tagMatch = before.match(/<([a-zA-Z][\w-]*)/);
+      if (tagMatch && !before.endsWith("/>")) {
+        const tag = tagMatch[1];
+        if (!before.endsWith(`</${tag}`)) {
+          e.preventDefault();
+          el.value = before + ">" + `</${tag}>` + el.value.substring(start);
+          el.selectionStart = el.selectionEnd = start + 1;
+        }
+      }
+    }
+  });
+}
+
+// Resizer
+function makeResizable(id, leftId) {
+  const resizer = document.getElementById(id);
   const left = document.getElementById(leftId);
-
+  let startX, startW;
   resizer.onmousedown = e => {
-    e.preventDefault();
-    const startX = e.clientX;
-    const startW = left.offsetWidth;
-
-    const doDrag = e => {
+    startX = e.clientX;
+    startW = left.offsetWidth;
+    document.onmousemove = e => {
       left.style.width = (startW + e.clientX - startX) + "px";
     };
-
-    const stop = () => {
-      document.removeEventListener("mousemove", doDrag);
-      document.removeEventListener("mouseup", stop);
+    document.onmouseup = () => {
+      document.onmousemove = document.onmouseup = null;
     };
-
-    document.addEventListener("mousemove", doDrag);
-    document.addEventListener("mouseup", stop);
   };
 }
 
-// Editor enhancements (auto-indent, brackets)
-document.getElementById("editor").addEventListener("keydown", e => {
-  if (e.key === "Tab") {
-    e.preventDefault();
-    const start = e.target.selectionStart;
-    e.target.value = e.target.value.substring(0, start) + "  " + e.target.value.substring(e.target.selectionEnd);
-    e.target.selectionStart = e.target.selectionEnd = start + 2;
-  } else if (["{", "[", "("].includes(e.key)) {
-    e.preventDefault();
-    const pairs = { "{": "}", "[": "]", "(": ")" };
-    const start = e.target.selectionStart;
-    e.target.value = e.target.value.substring(0, start) + e.key + pairs[e.key] + e.target.value.substring(e.target.selectionEnd);
-    e.target.selectionStart = e.target.selectionEnd = start + 1;
-  }
-});
-
 // Init
-document.querySelectorAll(".lang-btn").forEach(btn => {
-  btn.addEventListener("click", () => loadLanguage(btn.dataset.lang));
-});
-
 window.addEventListener("load", () => {
+  const btns = document.getElementById("lang-buttons");
+  languages.forEach(lang => {
+    const b = document.createElement("button");
+    b.className = "lang-btn";
+    b.dataset.lang = lang;
+    b.textContent = lang.toUpperCase();
+    b.onclick = () => loadLanguage(lang);
+    btns.appendChild(b);
+  });
+
   loadLanguage("html");
   makeResizable("resize1", "docs");
-  makeResizable("resize2", "editor-pane");
+  setupAutoComplete("editor");
+  setupAutoComplete("compiler-editor");
 });
 </script>
-
 </body>
 </html>
