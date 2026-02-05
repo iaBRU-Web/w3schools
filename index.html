@@ -1,426 +1,835 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRU WEB | Developed by Inezaime Bruno</title>
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BRU WEB Academy | by Ineza Aime Bruno</title>
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&family=Roboto:wght@400;500;700&display=swap">
+  
+  <!-- Pyodide for real Python execution -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+  
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #222;
+      --gray: #555;
+      --lightgray: #f4f4f4;
+      --border: #d4d4d4;
+      --accent: #04AA6D;     /* W3Schools-like green */
+      --accent-dark: #038c5a;
+      --editor-bg: #fdfdfd;
+      --console-bg: #1e1e1e;
+      --console-text: #d4d4d4;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --text: #e0e0e0;
+      --gray: #aaa;
+      --lightgray: #2d2d2d;
+      --border: #444;
+      --editor-bg: #222;
+      --console-bg: #0d1117;
+      --console-text: #c9d1d9;
+    }
+
+    * { box-sizing: border-box; margin:0; padding:0; }
+    html, body {
+      height: 100%;
+      font-family: 'Roboto', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      height: 54px;
+      background: var(--lightgray);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .brand {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .brand small {
+      font-weight: normal;
+      color: var(--gray);
+      font-size: 12px;
+      margin-left: 8px;
+    }
+
+    .btn {
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.12s;
+    }
+
+    .btn:hover { background: rgba(0,0,0,0.06); }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover { background: var(--accent-dark); }
+
+    .main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .pane {
+      display: flex;
+      flex-direction: column;
+      background: var(--lightgray);
+      border-right: 1px solid var(--border);
+    }
+
+    #docs { width: 320px; min-width: 280px; }
+    #editor-pane { flex: 1; min-width: 500px; background: var(--editor-bg); }
+    #ai { width: 380px; min-width: 320px; border-left: 1px solid var(--border); border-right: none; }
+
+    .resizer {
+      width: 5px;
+      background: var(--border);
+      cursor: col-resize;
+      transition: background 0.2s;
+    }
+    .resizer:hover, .resizer:active { background: var(--accent); }
+
+    .pane-header {
+      padding: 10px 16px;
+      background: var(--lightgray);
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .lang-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 16px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .lang-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .lang-btn.active,
+    .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(4,170,109,0.08);
+    }
+
+    .scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .scroll h3 { margin-top: 20px; font-size: 18px; color: var(--text); }
+    .scroll h4 { margin-top: 15px; font-size: 16px; }
+    .scroll ul, .scroll ol { margin-left: 20px; }
+    .scroll code { background: var(--lightgray); padding: 2px 4px; border-radius: 3px; }
+    .scroll pre { background: var(--lightgray); padding: 12px; border-radius: 4px; overflow-x: auto; }
+
+    #editor {
+      flex: 1;
+      width: 100%;
+      padding: 20px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 15px;
+      line-height: 1.5;
+      background: transparent;
+      color: var(--text);
+      border: none;
+      outline: none;
+      resize: none;
+      tab-size: 2;
+    }
+
+    .preview-area {
+      height: 38%;
+      border-top: 1px solid var(--border);
+      position: relative;
+      background: white;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    #console {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: var(--console-bg);
+      color: var(--console-text);
+      padding: 16px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 14px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    footer {
+      height: 34px;
+      background: var(--lightgray);
+      border-top: 1px solid var(--border);
+      padding: 0 16px;
+      font-size: 12px;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Ensure AI iframe fits nicely */
+    #ai-iframe {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: white; /* Fallback if loading */
+    }
+  </style>
 </head>
 <body data-theme="light">
 
-    <nav>
-        <div class="nav-brand">
-            <h2>BRU WEB</h2>
-            <p>Inezaime Bruno Academy</p>
-        </div>
-        <div class="nav-menu">
-            <div class="nav-group">Web Standard</div>
-            <button class="nav-link active" id="m-html" onclick="loadModule('html')">HTML Structure</button>
-            <button class="nav-link" id="m-css" onclick="loadModule('css')">CSS Styling</button>
-            <button class="nav-link" id="m-js" onclick="loadModule('js')">JavaScript ES6</button>
+<div class="app">
+  <header>
+    <div class="brand">
+      BRU WEB ACADEMY <small>by Ineza Aime Bruno</small>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn" onclick="toggleTheme()">Toggle Dark Mode</button>
+      <button class="btn btn-primary" onclick="runCode()">Run</button>
+    </div>
+  </header>
 
-            <div class="nav-group">Modern Backend</div>
-            <button class="nav-link" id="m-python" onclick="loadModule('python')">Python 3.11</button>
-            <button class="nav-link" id="m-sql" onclick="loadModule('sql')">SQL Database</button>
-            <button class="nav-link" id="m-php" onclick="loadModule('php')">PHP Server</button>
+  <div class="main">
+    <div class="pane" id="docs">
+      <div class="lang-buttons">
+        <button class="lang-btn active" data-lang="html">HTML</button>
+        <button class="lang-btn" data-lang="python">Python</button>
+        <button class="lang-btn" data-lang="js">JavaScript</button>
+        <button class="lang-btn" data-lang="cpp">C++</button>
+        <button class="lang-btn" data-lang="sql">SQL</button>
+        <button class="lang-btn" data-lang="php">PHP</button>
+      </div>
+      <div class="pane-header">Reference & Examples</div>
+      <div class="scroll" id="docs-content">
+        <h3>Welcome to BRU Academy</h3>
+        <p>Select a language to see detailed documentation, best practices, and examples.</p>
+      </div>
+    </div>
 
-            <div class="nav-group">Systems Engineering</div>
-            <button class="nav-link" id="m-cpp" onclick="loadModule('cpp')">C++ Master</button>
-            <button class="nav-link" id="m-java" onclick="loadModule('java')">Java Enterprise</button>
-            <button class="nav-link" id="m-rust" onclick="loadModule('rust')">Rust Safety</button>
-            <button class="nav-link" id="m-swift" onclick="loadModule('swift')">Swift iOS</button>
-        </div>
-    </nav>
+    <div class="resizer" id="resize1"></div>
 
-    <main>
-        <header>
-            <h1 id="mod-title" style="font-size: 18px;">HTML5 Academy</h1>
-            <div style="display: flex;">
-                <button class="btn-action" style="background:var(--text-main)" onclick="toggleTheme()">🌓 Theme</button>
-                <button class="btn-action" style="background:var(--success)" onclick="formatCode()">✨ Auto-Space</button>
-                <button class="btn-action" onclick="saveToFile()">💾 Save Code</button>
-            </div>
-        </header>
+    <div class="pane" id="editor-pane">
+      <div class="pane-header">
+        <span>Editor — <span id="lang-name">HTML</span></span>
+      </div>
+      <textarea id="editor" spellcheck="false"></textarea>
+      <div class="preview-area">
+        <iframe id="preview"></iframe>
+        <pre id="console"></pre>
+      </div>
+    </div>
 
-        <div class="workspace">
-            <div class="lesson-panel">
-                <div class="tab-nav">
-                    <div id="t-learn" class="tab-item active" onclick="switchTab('learn')">COURSE GUIDE</div>
-                    <div id="t-quiz" class="tab-item" onclick="switchTab('quiz')">QUIZ MODE</div>
-                </div>
+    <div class="resizer" id="resize2"></div>
 
-                <div id="p-learn" class="content-pane">
-                    </div>
+    <div class="pane" id="ai">
+      <div class="pane-header">BRU AI Assistant</div>
+      <iframe id="ai-iframe" src="https://bru-ai.vercel.app/" title="AI Sidekick"></iframe>
+    </div>
+  </div>
 
-                <div id="p-quiz" class="content-pane hide">
-                    <h2>Quiz Evaluation</h2>
-                    <div id="quiz-root"></div>
-                </div>
-            </div>
+  <footer>
+    <span>© 2026 — Crafted with passion by Ineza Aime Bruno</span>
+    <span>BRU Core • Always Learning</span>
+  </footer>
+</div>
 
-            <div class="execution-zone">
-                <div class="editor-box">
-                    <div class="box-header">
-                        <span id="editor-info">FILE: INDEX.HTML</span>
-                        <button class="btn-action" onclick="runSystem()" style="padding: 5px 15px;">RUN SYSTEM &rsaquo;</button>
-                    </div>
-                    <textarea id="code-editor" spellcheck="false"></textarea>
-                </div>
+<script>
+// Expanded content database with a lot more info
+const content = {
+  html: {
+    title: "HTML5: Structure and Semantics",
+    text: `
+<h3>Introduction to HTML5</h3>
+<p>HTML5 is the latest standard for structuring web content. It introduces semantic elements that improve accessibility, SEO, and code readability.</p>
 
-                <div class="output-box">
-                    <div class="box-header" style="background:#eee; color:#333">LIVE EXECUTION CONSOLE</div>
-                    <iframe id="preview"></iframe>
-                    <div id="console"></div>
-                </div>
-            </div>
-        </div>
+<h4>Key Semantic Elements</h4>
+<ul>
+  <li><code>&lt;header&gt;</code>: Introductory content or navigation aids.</li>
+  <li><code>&lt;nav&gt;</code>: Navigation links.</li>
+  <li><code>&lt;main&gt;</code>: Main content of the document.</li>
+  <li><code>&lt;article&gt;</code>: Independent, self-contained content.</li>
+  <li><code>&lt;section&gt;</code>: Thematic grouping of content.</li>
+  <li><code>&lt;aside&gt;</code>: Content indirectly related to the main content.</li>
+  <li><code>&lt;footer&gt;</code>: Footer for its nearest sectioning content or root.</li>
+</ul>
 
-        <footer>
-            © 2026 BRU WEB | Crafted by <b>Inezaime Bruno</b> | Hosting at <a href="https://bru-ai.vercel.app" style="color:var(--accent); margin-left:5px;">bru-ai.vercel.app</a>
-        </footer>
-    </main>
-    <style>
-        :root {
-            --bg-body: #f8f9fa;
-            --bg-side: #1a1c2c;
-            --bg-card: #ffffff;
-            --text-main: #2d3436;
-            --text-muted: #636e72;
-            --accent: #0984e3;
-            --success: #00b894;
-            --danger: #d63031;
-            --border: #dfe6e9;
-            --shadow: rgba(0,0,0,0.05);
-            --editor-bg: #282c34;
-        }
+<h4>Best Practices</h4>
+<ol>
+  <li>Use semantic tags over generic <code>&lt;div&gt;</code> for better structure.</li>
+  <li>Always include <code>&lt;!DOCTYPE html&gt;</code> to trigger standards mode.</li>
+  <li>Add meta tags for charset, viewport, and SEO (e.g., <code>&lt;meta name="description" content="..."&gt;</code>).</li>
+  <li>Validate your HTML using tools like W3C Validator.</li>
+</ol>
 
-        [data-theme="dark"] {
-            --bg-body: #0f0f17;
-            --bg-side: #08090f;
-            --bg-card: #1e1e2e;
-            --text-main: #f5f6fa;
-            --text-muted: #a4b0be;
-            --border: #2f3542;
-            --shadow: rgba(0,0,0,0.3);
-        }
+<h4>Forms and Input Types</h4>
+<p>HTML5 enhances forms with new input types:</p>
+<ul>
+  <li><code>type="email"</code>, <code>type="url"</code>, <code>type="date"</code>, etc.</li>
+  <li>Attributes: <code>required</code>, <code>pattern</code>, <code>placeholder</code>.</li>
+</ul>
+<pre><code>&lt;form&gt;
+  &lt;input type="email" required placeholder="Email"&gt;
+  &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
 
-        body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            background: var(--bg-body);
-            color: var(--text-main);
-            transition: 0.3s;
-        }
+<h4>Multimedia</h4>
+<p>Embed audio and video without plugins:</p>
+<pre><code>&lt;video src="video.mp4" controls&gt;&lt;/video&gt;</code></pre>
 
-        /* --- SIDEBAR --- */
-        nav {
-            width: 280px;
-            background: var(--bg-side);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
-        }
+<h4>Accessibility Tips</h4>
+<ul>
+  <li>Use <code>alt</code> attributes for images.</li>
+  <li>Ensure proper heading hierarchy (h1 to h6).</li>
+  <li>Add ARIA roles where needed.</li>
+</ul>
 
-        .nav-brand {
-            padding: 40px 25px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
+<p><strong>Bruno's Tip:</strong> Semantic HTML is key to modern web engineering. It makes your code future-proof and easier to maintain.</p>
+    `,
+    starter: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My HTML Page</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; background: #f9f9f9; }
+    .card { 
+      max-width: 500px; 
+      margin: auto; 
+      padding: 30px; 
+      border: 2px solid #04AA6D; 
+      border-radius: 8px; 
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>BRU Academy Header</h1>
+  </header>
+  <main>
+    <div class="card">
+      <h2>Hello from HTML5</h2>
+      <p>Build structured web pages with semantics.</p>
+    </div>
+  </main>
+  <footer>
+    <p>© Ineza Aime Bruno</p>
+  </footer>
+</body>
+</html>`
+  },
 
-        .nav-brand h2 { margin: 0; color: var(--accent); letter-spacing: 2px; font-size: 24px; }
-        .nav-brand p { margin: 8px 0 0; font-size: 10px; opacity: 0.6; text-transform: uppercase; }
+  python: {
+    title: "Python 3: Versatile Programming",
+    text: `
+<h3>Introduction to Python</h3>
+<p>Python is a high-level, interpreted language known for its simplicity and readability. It's widely used in web development, data science, automation, AI, and more.</p>
 
-        .nav-menu { flex: 1; overflow-y: auto; padding: 20px 0; }
-        .nav-group { padding: 20px 25px 5px; font-size: 11px; color: #576574; font-weight: 800; text-transform: uppercase; }
-        
-        .nav-link {
-            width: 100%; padding: 14px 25px; background: none; border: none;
-            color: #bdc3c7; text-align: left; cursor: pointer; transition: 0.2s;
-            font-size: 14px; border-left: 4px solid transparent;
-        }
+<h4>Core Concepts</h4>
+<ul>
+  <li><strong>Variables:</strong> Dynamic typing – no need to declare types.</li>
+  <li><strong>Functions:</strong> Defined with <code>def</code>, support defaults, *args, **kwargs.</li>
+  <li><strong>Control Flow:</strong> if/else, for/while loops, try/except for errors.</li>
+</ul>
+<pre><code>x = 10
+if x > 5:
+    print("Greater than 5")</code></pre>
 
-        .nav-link:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-link.active { background: rgba(9, 132, 227, 0.1); color: white; border-left-color: var(--accent); }
+<h4>Data Structures</h4>
+<ul>
+  <li><strong>Lists:</strong> Mutable sequences – <code>[1, 2, 3]</code>.</li>
+  <li><strong>Tuples:</strong> Immutable – <code>(1, 2, 3)</code>.</li>
+  <li><strong>Dictionaries:</strong> Key-value pairs – <code>{"key": "value"}</code>.</li>
+  <li><strong>Sets:</strong> Unique elements – <code>{1, 2, 3}</code>.</li>
+</ul>
+<h4>List Comprehensions</h4>
+<p>Efficient way to create lists:</p>
+<pre><code>squares = [x**2 for x in range(10) if x % 2 == 0]</code></pre>
 
-        /* --- MAIN --- */
-        main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+<h4>Modules and Libraries</h4>
+<p>Import standard libraries:</p>
+<ul>
+  <li><code>import math</code> for mathematical functions.</li>
+  <li><code>import random</code> for randomness.</li>
+  <li>Third-party: NumPy for arrays, Pandas for data frames.</li>
+</ul>
 
-        header {
-            height: 70px; background: var(--bg-card); padding: 0 30px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border); transition: background 0.3s;
-        }
+<h4>OOP in Python</h4>
+<p>Classes and objects:</p>
+<pre><code>class Person:
+    def __init__(self, name):
+        self.name = name
+    
+    def greet(self):
+        return f"Hello, {self.name}"
 
-        .btn-action {
-            background: var(--accent); color: white; border: none; padding: 10px 18px;
-            border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; margin-left: 10px;
-        }
+p = Person("Bruno")
+print(p.greet())</code></pre>
 
-        /* --- WORKSPACE --- */
-        .workspace { display: flex; flex: 1; padding: 20px; gap: 20px; overflow: hidden; }
+<h4>File Handling</h4>
+<p>Read/write files:</p>
+<pre><code>with open('file.txt', 'r') as f:
+    content = f.read()</code></pre>
 
-        .lesson-panel {
-            width: 400px; background: var(--bg-card); border-radius: 12px;
-            display: flex; flex-direction: column; border: 1px solid var(--border);
-            box-shadow: 0 10px 30px var(--shadow); overflow: hidden;
-        }
+<h4>Best Practices</h4>
+<ol>
+  <li>Follow PEP 8 style guide.</li>
+  <li>Use virtual environments (venv).</li>
+  <li>Handle exceptions gracefully.</li>
+  <li>Write docstrings and comments.</li>
+</ol>
 
-        .tab-nav { display: flex; background: rgba(0,0,0,0.02); border-bottom: 1px solid var(--border); }
-        .tab-item { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 800; font-size: 12px; opacity: 0.5; }
-        .tab-item.active { opacity: 1; border-bottom: 3px solid var(--accent); background: var(--bg-card); }
+<p><strong>Bruno's Tip:</strong> Python's "batteries included" philosophy makes it ideal for rapid development. Focus on readability – code is read more than written.</p>
+    `,
+    starter: `# Python Example in BRU Academy
+import math
 
-        .content-pane { flex: 1; overflow-y: auto; padding: 30px; line-height: 1.8; }
-        .content-pane h2 { color: var(--accent); margin-top: 0; font-size: 24px; }
+def calculate_circle_area(radius):
+    return math.pi * radius ** 2
 
-        /* --- THE BIG EXECUTION ZONE --- */
-        .execution-zone { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+# Example usage
+r = 5
+area = calculate_circle_area(r)
+print(f"The area of a circle with radius {r} is {area:.2f}")
 
-        .editor-box {
-            flex: 1.5; background: var(--editor-bg); border-radius: 12px;
-            display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-        }
+# List comprehension
+evens = [x for x in range(10) if x % 2 == 0]
+print("Even numbers:", evens)
 
-        .box-header {
-            padding: 12px 20px; background: #21252b; display: flex; 
-            justify-content: space-between; align-items: center; color: #abb2bf; font-size: 11px;
-        }
+# Dictionary
+person = {"name": "Ineza Aime Bruno", "role": "Engineer"}
+print(person)`
+  },
 
-        #code-editor {
-            flex: 1; width: 100%; background: transparent; color: #61afef;
-            border: none; padding: 25px; font-family: 'Fira Code', 'Consolas', monospace;
-            font-size: 16px; outline: none; resize: none; line-height: 1.6;
-        }
+  js: {
+    title: "JavaScript ES6+: Modern Web Scripting",
+    text: `
+<h3>Introduction to JavaScript</h3>
+<p>JavaScript is the programming language of the web, enabling interactive and dynamic content.</p>
 
-        .output-box {
-            flex: 1; background: white; border-radius: 12px;
-            border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden;
-        }
+<h4>Variables and Data Types</h4>
+<ul>
+  <li><code>let</code> and <code>const</code> for block-scoped variables.</li>
+  <li>Primitives: string, number, boolean, null, undefined, symbol, bigint.</li>
+  <li>Objects: arrays, functions, objects.</li>
+</ul>
 
-        #preview { flex: 1; border: none; width: 100%; height: 100%; }
-        #console { 
-            flex: 1; background: #000; color: #00ff00; padding: 20px; 
-            font-family: 'Courier New', monospace; white-space: pre-wrap; overflow-y: auto; display: none;
-        }
+<h4>Functions</h4>
+<p>Arrow functions for concise syntax:</p>
+<pre><code>const add = (a, b) => a + b;</code></pre>
 
-        /* QUIZ UI */
-        .quiz-card { background: rgba(0,0,0,0.02); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .quiz-btn { 
-            display: block; width: 100%; padding: 12px; margin-top: 8px; text-align: left;
-            background: var(--bg-card); border: 1px solid var(--border); cursor: pointer;
-            border-radius: 6px; color: var(--text-main); font-weight: 500;
-        }
-        .quiz-btn:hover { border-color: var(--accent); background: rgba(9, 132, 227, 0.05); }
+<h4>DOM Manipulation</h4>
+<p>Interact with HTML:</p>
+<pre><code>document.getElementById('id').textContent = 'Hello';</code></pre>
 
-        footer {
-            height: 45px; background: var(--bg-card); border-top: 1px solid var(--border);
-            display: flex; justify-content: center; align-items: center; font-size: 12px; color: var(--text-muted);
-        }
+<h4>Async Programming</h4>
+<ul>
+  <li>Promises: <code>new Promise((resolve, reject) => {...})</code>.</li>
+  <li>Async/await: <code>async function fetchData() { await ... }</code>.</li>
+</ul>
 
-        .hide { display: none; }
-    </style>
+<h4>Arrays and Methods</h4>
+<ul>
+  <li><code>map</code>, <code>filter</code>, <code>reduce</code>.</li>
+  <li>Destructuring: <code>const [a, b] = [1, 2];</code>.</li>
+</ul>
+<pre><code>const doubled = [1,2,3].map(x => x*2);</code></pre>
 
-    <script>
-        let pyodide;
-        let activeMod = 'html';
+<h4>Modules</h4>
+<p>Export/import:</p>
+<pre><code>export const func = () => {};
+import { func } from './module.js';</code></pre>
 
-        // --- THE MASSIVE 800+ LINE DATABASE ---
-        const db = {
-            html: {
-                title: "HTML5: Structural Engineering",
-                type: "html",
-                text: `
-                    <h2>HyperText Markup Language</h2>
-                    <p>HTML is the foundation of every single web page. It uses <b>tags</b> to tell the browser how to display content.</p>
-                    <h3>The Rule of Semantics</h3>
-                    <p>Instead of using <code>&lt;div&gt;</code> for everything, use tags that describe their purpose:</p>
-                    <ul>
-                        <li><code>&lt;header&gt;</code>: Content intro or navigation.</li>
-                        <li><code>&lt;section&gt;</code>: Generic standalone section.</li>
-                        <li><code>&lt;article&gt;</code>: Self-contained composition.</li>
-                        <li><code>&lt;aside&gt;</code>: Side content like sidebars.</li>
-                    </ul>
-                    <div style="background:rgba(9, 132, 227, 0.1); border-radius:10px; padding:20px; margin-top:20px;">
-                        <b>Bruno's Professional Insight:</b> Search engines (SEO) love semantic HTML. It helps them understand your site better!
-                    </div>
-                    <h3>Attributes</h3>
-                    <p>Attributes provide additional information about elements. Example: <code>&lt;img src="pic.jpg" alt="Description"&gt;</code>.</p>
-                `,
-                code: "<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: sans-serif; text-align: center; padding-top: 50px; }\n    .btn { background: #0984e3; color: white; padding: 15px 30px; border-radius: 50px; border: none; cursor: pointer; transition: 0.3s; }\n    .btn:hover { transform: scale(1.1); }\n  </style>\n</head>\n<body>\n  <h1>Welcome to BRU WEB Academy</h1>\n  <p>Engineered by Inezaime Bruno.</p>\n  <button class='btn' onclick='alert(\"Success!\")'>Launch System</button>\n</body>\n</html>",
-                quiz: [
-                    { q: "Which element is the root of an HTML page?", o: ["<head>", "<body>", "<html>"], a: 2 },
-                    { q: "What does HTML stand for?", o: ["Hyperlinks Text Mark Language", "Hyper Text Markup Language", "Home Tool Markup Language"], a: 1 }
-                ]
-            },
-            python: {
-                title: "Python 3.11: AI & Data Science",
-                type: "py",
-                text: `
-                    <h2>Python Development</h2>
-                    <p>Python is a high-level, interpreted language. Its design philosophy emphasizes code readability.</p>
-                    <h3>Core Concepts</h3>
-                    <p><b>1. Lists:</b> Ordered collections: <code>my_list = [1, 2, 3]</code></p>
-                    <p><b>2. Dictionaries:</b> Key-value pairs: <code>user = {"id": 1}</code></p>
-                    <p><b>3. List Comprehension:</b> A concise way to create lists.</p>
-                `,
-                code: "# Python Engineering\nimport math\n\ndef bru_system_check(name):\n    status = \"Online\"\n    return f\"System for {name} is {status}. Area of circle: {math.pi * 5**2:.2f}\"\n\nprint(bru_system_check(\"Inezaime Bruno\"))\n\nfor i in range(1, 6):\n    print(f\"Processing Core {i}...\")",
-                quiz: [
-                    { q: "How do you start a function?", o: ["function name():", "def name():", "void name()"], a: 1 },
-                    { q: "Which collection is unordered?", o: ["List", "Dictionary", "Tuple"], a: 1 }
-                ]
-            },
-            js: {
-                title: "JavaScript ES6: The Interaction Engine",
-                type: "js",
-                text: `
-                    <h2>Modern JavaScript</h2>
-                    <p>JavaScript is the most popular programming language in the world. Since ES6, it has become incredibly powerful.</p>
-                    <h3>Promises and Async</h3>
-                    <p>JS handles asynchronous operations using Promises and <code>async/await</code>.</p>
-                `,
-                code: "// JS Master Course\nconst creator = 'Inezaime Bruno';\n\nconst initialize = async () => {\n  console.log('Validating system files...');\n  await new Promise(r => setTimeout(r, 1000));\n  console.log(`Welcome, ${creator}. Intelligence Active.`);\n};\n\ninitialize();",
-                quiz: [{ q: "Which is for constant values?", o: ["let", "var", "const"], a: 2 }]
-            },
-            cpp: {
-                title: "C++ Masterclass: Systems & Games",
-                type: "js",
-                text: "<h2>C++ Systems</h2><p>C++ is used for building high-performance applications, browsers, and AAA games.</p>",
-                code: "#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << \"C++ Logic Online\" << endl;\n  return 0;\n}",
-                quiz: [{ q: "What symbol ends a statement?", o: [".", ":", ";"], a: 2 }]
-            },
-            sql: {
-                title: "SQL: Database Architecture",
-                type: "js",
-                text: "<h2>SQL Queries</h2><p>Structured Query Language is how we communicate with relational databases.</p>",
-                code: "SELECT * FROM Users \nWHERE name = 'Inezaime Bruno' \nORDER BY id DESC;",
-                quiz: [{ q: "What does SQL stand for?", o: ["Simple Query Lang", "Structured Query Lang"], a: 1 }]
-            },
-            php: {
-                title: "PHP 8: Server-Side Logic",
-                type: "html",
-                text: "<h2>PHP Backend</h2><p>PHP powers over 70% of the web. It runs on the server.</p>",
-                code: "<?php\n  $name = \"Inezaime Bruno\";\n  echo \"<h1>Server Response: Hello $name</h1>\";\n?>",
-                quiz: [{ q: "Where does PHP run?", o: ["Browser", "Server"], a: 1 }]
-            },
-            rust: {
-                title: "Rust: Safe Systems Programming",
-                type: "js",
-                text: "<h2>Rust Memory Safety</h2><p>Rust prevents memory leaks and crashes using a unique ownership system.</p>",
-                code: "fn main() {\n  let x = String::from(\"Bruno Safety\");\n  println!(\"{}\", x);\n}",
-                quiz: [{ q: "Does Rust use Garbage Collection?", o: ["Yes", "No"], a: 1 }]
-            }
-        };
+<h4>Best Practices</h4>
+<ol>
+  <li>Use strict mode: <code>'use strict';</code></li>
+  <li>Avoid global variables.</li>
+  <li>Handle errors with try/catch.</li>
+  <li>Use ESLint for linting.</li>
+</ol>
 
-        // --- CORE FUNCTIONS ---
+<p><strong>Bruno's Tip:</strong> Master async patterns for real-world apps like APIs and user interactions.</p>
+    `,
+    starter: `// JavaScript Example
+console.log('Hello from BRU Academy!');
 
-        function toggleTheme() {
-            const b = document.body;
-            b.setAttribute('data-theme', b.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
-        }
+const numbers = [1, 2, 3, 4, 5];
+const evens = numbers.filter(n => n % 2 === 0);
+console.log('Even numbers:', evens);
 
-        function loadModule(id) {
-            localStorage.setItem('bru_save_' + activeMod, document.getElementById('code-editor').value);
-            activeMod = id;
-            const data = db[id] || db.html;
+async function fetchData() {
+  // Simulated fetch
+  return new Promise(resolve => setTimeout(() => resolve('Data loaded'), 1000));
+}
 
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            document.getElementById('m-' + id).classList.add('active');
+fetchData().then(data => console.log(data));`
+  },
 
-            document.getElementById('mod-title').innerText = data.title;
-            document.getElementById('editor-info').innerText = "WORKSPACE: " + id.toUpperCase();
-            document.getElementById('p-learn').innerHTML = data.text;
-            
-            const saved = localStorage.getItem('bru_save_' + id);
-            document.getElementById('code-editor').value = saved || data.code;
+  cpp: {
+    title: "C++: High-Performance Programming",
+    text: `
+<h3>Introduction to C++</h3>
+<p>C++ is a powerful, compiled language for systems, games, and performance-critical apps.</p>
 
-            switchTab('learn');
-            buildQuiz(data.quiz);
-            runSystem();
-        }
+<h4>Basics</h4>
+<ul>
+  <li>Variables: int, double, char, string (need #include &lt;string&gt;).</li>
+  <li>Functions: Return types, parameters.</li>
+</ul>
+<pre><code>#include &lt;iostream&gt;
+int main() {
+    std::cout << "Hello";
+    return 0;
+}</code></pre>
 
-        function switchTab(t) {
-            document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('t-' + t).classList.add('active');
-            document.getElementById('p-learn').classList.add('hide');
-            document.getElementById('p-quiz').classList.add('hide');
-            document.getElementById('p-' + t).classList.remove('hide');
-        }
+<h4>Control Structures</h4>
+<p>If, switch, for, while, do-while.</p>
 
-        function formatCode() {
-            const area = document.getElementById('code-editor');
-            let code = area.value;
-            // Simple prettifier: fix indentation after curly braces
-            let formatted = code.split('\n').map(line => line.trim()).join('\n');
-            formatted = formatted.replace(/{/g, ' {\n  ').replace(/}/g, '\n}');
-            area.value = formatted;
-        }
+<h4>OOP</h4>
+<ul>
+  <li>Classes, objects, inheritance, polymorphism.</li>
+  <li>Constructors, destructors.</li>
+</ul>
+<pre><code>class Person {
+public:
+    std::string name;
+    Person(std::string n) : name(n) {}
+};</code></pre>
 
-        function saveToFile() {
-            const code = document.getElementById('code-editor').value;
-            const blob = new Blob([code], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `bru_web_${activeMod}.txt`;
-            link.click();
-        }
+<h4>Standard Template Library (STL)</h4>
+<ul>
+  <li>Vectors: <code>std::vector&lt;int&gt; v;</code></li>
+  <li>Maps, sets, algorithms.</li>
+</ul>
 
-        function buildQuiz(qs) {
-            const root = document.getElementById('quiz-root');
-            root.innerHTML = '';
-            if (!qs) return;
-            qs.forEach((q, i) => {
-                const div = document.createElement('div');
-                div.className = 'quiz-card';
-                div.innerHTML = `<p><b>Q${i+1}:</b> ${q.q}</p>`;
-                q.o.forEach((opt, oi) => {
-                    const b = document.createElement('button');
-                    b.className = 'quiz-btn';
-                    b.innerText = opt;
-                    b.onclick = () => {
-                        if (oi === q.a) { b.style.background = 'var(--success)'; b.style.color = 'white'; }
-                        else { b.style.background = 'var(--danger)'; b.style.color = 'white'; }
-                    };
-                    div.appendChild(b);
-                });
-                root.appendChild(div);
-            });
-        }
+<h4>Pointers and Memory</h4>
+<p>Manage with new/delete, smart pointers (unique_ptr, shared_ptr).</p>
 
-        async function runSystem() {
-            const code = document.getElementById('code-editor').value;
-            const type = (db[activeMod] || db.html).type;
-            const preview = document.getElementById('preview');
-            const consoleBox = document.getElementById('console');
+<h4>Best Practices</h4>
+<ol>
+  <li>Use modern C++ (C++11+).</li>
+  <li>Avoid raw pointers.</li>
+  <li>Compile with warnings (-Wall).</li>
+</ol>
 
-            if (type === 'html') {
-                preview.style.display = 'block'; consoleBox.style.display = 'none';
-                const doc = preview.contentDocument;
-                doc.open(); doc.write(code); doc.close();
-            } else if (type === 'py') {
-                preview.style.display = 'none'; consoleBox.style.display = 'block';
-                consoleBox.innerText = "Initializing Python 3.11 Runtime...";
-                if (!pyodide) pyodide = await loadPyodide();
-                try {
-                    let out = await pyodide.runPython(`import sys, io\nsys.stdout = io.StringIO()\n${code}\nsys.stdout.getvalue()`);
-                    consoleBox.innerText = out || "Success (No Output)";
-                } catch(e) { consoleBox.innerText = e; }
-            } else {
-                preview.style.display = 'none'; consoleBox.style.display = 'block';
-                consoleBox.innerText = "Processing Logic...\n";
-                let logs = [];
-                const mock = { log: (v) => logs.push(v) };
-                try {
-                    new Function('console', code)(mock);
-                    consoleBox.innerText += logs.length ? logs.join('\n') : "Execution Finished.";
-                } catch(e) { consoleBox.innerText += "Logic Verified. Compilation Success."; }
-            }
-        }
+<p><strong>Bruno's Tip:</strong> C++ excels in efficiency – understand memory to avoid leaks.</p>
+    `,
+    starter: `#include <iostream>
+#include <vector>
 
-        window.onload = () => loadModule('html');
-    </script>
+int main() {
+    std::cout << "Hello from C++ in BRU Academy!" << std::endl;
+    
+    std::vector<int> nums = {1, 2, 3};
+    for(int n : nums) {
+        std::cout << n << " ";
+    }
+    return 0;
+}`
+  },
+
+  sql: {
+    title: "SQL: Database Querying",
+    text: `
+<h3>Introduction to SQL</h3>
+<p>SQL (Structured Query Language) is used to manage and query relational databases.</p>
+
+<h4>Basic Commands</h4>
+<ul>
+  <li>SELECT: Retrieve data.</li>
+  <li>INSERT, UPDATE, DELETE: Modify data.</li>
+  <li>CREATE, ALTER, DROP: Manage structures.</li>
+</ul>
+<pre><code>SELECT * FROM users WHERE age > 18;</code></pre>
+
+<h4>Joins</h4>
+<ul>
+  <li>INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL JOIN.</li>
+</ul>
+<pre><code>SELECT u.name, o.product 
+FROM users u 
+INNER JOIN orders o ON u.id = o.user_id;</code></pre>
+
+<h4>Aggregates</h4>
+<ul>
+  <li>COUNT, SUM, AVG, MIN, MAX.</li>
+  <li>GROUP BY, HAVING.</li>
+</ul>
+
+<h4>Subqueries and Indexes</h4>
+<p>Use subqueries for complex queries; indexes for performance.</p>
+
+<h4>Best Practices</h4>
+<ol>
+  <li>Normalize database schema.</li>
+  <li>Use prepared statements to prevent SQL injection.</li>
+  <li>Optimize queries with EXPLAIN.</li>
+</ol>
+
+<p><strong>Bruno's Tip:</strong> SQL is essential for data-driven apps – master joins for real-world use.</p>
+    `,
+    starter: `-- SQL Example
+CREATE TABLE students (
+    id INT PRIMARY KEY,
+    name VARCHAR(50),
+    age INT
+);
+
+INSERT INTO students (id, name, age) VALUES (1, 'Bruno', 25);
+
+SELECT * FROM students WHERE age > 20;`
+  },
+
+  php: {
+    title: "PHP: Server-Side Scripting",
+    text: `
+<h3>Introduction to PHP</h3>
+<p>PHP is a server-side language for web development, powering sites like WordPress.</p>
+
+<h4>Basics</h4>
+<ul>
+  <li>Embed in HTML: <code>&lt;?php ... ?&gt;</code></li>
+  <li>Variables: $var = value;</li>
+</ul>
+<pre><code>&lt;?php echo "Hello"; ?&gt;</code></pre>
+
+<h4>Control Structures</h4>
+<p>If, switch, for, foreach, while.</p>
+
+<h4>Functions</h4>
+<pre><code>function add($a, $b) { return $a + $b; }</code></pre>
+
+<h4>Arrays</h4>
+<ul>
+  <li>Indexed: $arr = [1,2,3];</li>
+  <li>Associative: $arr = ['key' => 'value'];</li>
+</ul>
+
+<h4>Database Interaction</h4>
+<p>Use PDO or mysqli for MySQL.</p>
+<pre><code>$pdo = new PDO('mysql:host=localhost;dbname=test', 'user', 'pass');
+$stmt = $pdo->query('SELECT * FROM table');</code></pre>
+
+<h4>OOP</h4>
+<p>Classes, traits, namespaces.</p>
+
+<h4>Best Practices</h4>
+<ol>
+  <li>Use Composer for dependencies.</li>
+  <li>Sanitize inputs to prevent vulnerabilities.</li>
+  <li>Follow PSR standards.</li>
+</ol>
+
+<p><strong>Bruno's Tip:</strong> PHP is great for quick web apps – combine with frameworks like Laravel.</p>
+    `,
+    starter: `<?php
+// PHP Example
+$name = "Ineza Aime Bruno";
+echo "Hello, $name!";
+
+$fruits = ['apple', 'banana', 'cherry'];
+foreach ($fruits as $fruit) {
+    echo "<br>$fruit";
+}
+
+function sum($a, $b) {
+    return $a + $b;
+}
+
+echo "<br>Sum: " . sum(5, 10);
+?>`
+  }
+};
+
+let currentLang = "html";
+let pyodide = null;
+
+async function loadPyodide() {
+  if (!pyodide) {
+    pyodide = await loadPyodideInstance();
+    await pyodide.loadPackage("micropip");
+  }
+  return pyodide;
+}
+
+async function loadPyodideInstance() {
+  return await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" });
+}
+
+function loadLanguage(lang) {
+  currentLang = lang;
+  const data = content[lang] || content.html;
+
+  document.getElementById("docs-content").innerHTML = `<h3>${data.title}</h3>${data.text}`;
+  document.getElementById("editor").value = data.starter;
+  document.getElementById("lang-name").textContent = lang.toUpperCase();
+
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.lang === lang);
+  });
+
+  runCode();
+}
+
+function toggleTheme() {
+  document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+}
+
+async function runCode() {
+  const code = document.getElementById("editor").value.trim();
+  const preview = document.getElementById("preview");
+  const consoleEl = document.getElementById("console");
+
+  consoleEl.textContent = "";
+  preview.style.display = "none";
+  consoleEl.style.display = "none";
+
+  if (currentLang === "html") {
+    preview.style.display = "block";
+    const doc = preview.contentDocument || preview.contentWindow.document;
+    doc.open();
+    doc.write(code);
+    doc.close();
+  } else if (currentLang === "python") {
+    consoleEl.style.display = "block";
+    consoleEl.textContent = "Running Python...\n";
+    try {
+      const py = await loadPyodide();
+      let output = "";
+      py.globals.set("print", (s) => { output += s + "\n"; });
+      await py.runPythonAsync(code);
+      consoleEl.textContent += output || "Executed successfully (no output).";
+    } catch (err) {
+      consoleEl.textContent += `Error: ${err.message}`;
+    }
+  } else if (currentLang === "js") {
+    consoleEl.style.display = "block";
+    consoleEl.textContent = "JavaScript Output:\n";
+    try {
+      let output = "";
+      const originalConsoleLog = console.log;
+      console.log = (...args) => { output += args.join(" ") + "\n"; };
+      eval(code);
+      console.log = originalConsoleLog;
+      consoleEl.textContent += output || "Executed successfully (no output).";
+    } catch (err) {
+      consoleEl.textContent += `Error: ${err.message}`;
+    }
+  } else {
+    // For other langs: just show code in console as preview
+    consoleEl.style.display = "block";
+    consoleEl.textContent = `Preview for ${currentLang.toUpperCase()}:\n${code}\n\n(Note: Full execution not supported in browser for this language.)`;
+  }
+}
+
+// Resizers (same as before)
+function makeResizable(resizerId, leftId) {
+  const resizer = document.getElementById(resizerId);
+  const left = document.getElementById(leftId);
+
+  resizer.onmousedown = e => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = left.offsetWidth;
+
+    const doDrag = e => {
+      left.style.width = (startW + e.clientX - startX) + "px";
+    };
+
+    const stop = () => {
+      document.removeEventListener("mousemove", doDrag);
+      document.removeEventListener("mouseup", stop);
+    };
+
+    document.addEventListener("mousemove", doDrag);
+    document.addEventListener("mouseup", stop);
+  };
+}
+
+// Editor enhancements (auto-indent, brackets)
+document.getElementById("editor").addEventListener("keydown", e => {
+  if (e.key === "Tab") {
+    e.preventDefault();
+    const start = e.target.selectionStart;
+    e.target.value = e.target.value.substring(0, start) + "  " + e.target.value.substring(e.target.selectionEnd);
+    e.target.selectionStart = e.target.selectionEnd = start + 2;
+  } else if (["{", "[", "("].includes(e.key)) {
+    e.preventDefault();
+    const pairs = { "{": "}", "[": "]", "(": ")" };
+    const start = e.target.selectionStart;
+    e.target.value = e.target.value.substring(0, start) + e.key + pairs[e.key] + e.target.value.substring(e.target.selectionEnd);
+    e.target.selectionStart = e.target.selectionEnd = start + 1;
+  }
+});
+
+// Init
+document.querySelectorAll(".lang-btn").forEach(btn => {
+  btn.addEventListener("click", () => loadLanguage(btn.dataset.lang));
+});
+
+window.addEventListener("load", () => {
+  loadLanguage("html");
+  makeResizable("resize1", "docs");
+  makeResizable("resize2", "editor-pane");
+});
+</script>
+
 </body>
 </html>
