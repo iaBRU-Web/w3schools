@@ -268,203 +268,425 @@ const content = {
 <h4>Forms & Input</h4>
 <pre><code>&lt;input type="email" required placeholder="you@email.com"&gt;</code></pre>
 <p><b>Bruno Tip:</b> Always use semantic tags → better SEO, accessibility, future-proof code.</p>
-<pre><code>&lt;1. What Python Is
-Python is a programming language used to tell a computer what to do.
-It is popular because it is easy to read, easy to write, and very powerful.
-People use Python for:
+<pre>🌐 HTML FULL BEGINNER NOTES (LEARN IT PROPERLY)
+1. What HTML Really Is
 
+HTML means HyperText Markup Language.
 
-Making games 🎮
+HTML is NOT programming.
+HTML is used to structure content on a web page.
 
+Think of HTML as:
 
-Building websites 🌐
+The bones of a website 🦴
 
+It tells the browser what is what (heading, paragraph, image, link)
 
-Data science & AI 🤖
+2. How HTML Works
 
+HTML uses tags
 
-Automating boring work ⚙️
+Tags are written inside angle brackets < >
 
+Most tags have:
 
+an opening tag
 
-2. How Python Thinks
-Python works line by line, from top to bottom.
-Each line is an instruction.
-If Python doesn’t understand one line, it stops and shows an error.
+a closing tag
 
-3. Variables (Storing Information)
-A variable is like a box with a name that stores information.
-You can store:
+HTML files are saved with:
 
+.html
 
-Numbers (age, score)
+3. HTML Document Structure (Big Idea)
 
+Every HTML page has:
 
-Text (name, message)
+A declaration (tells browser it’s HTML)
 
+A head (info about the page)
 
-True or False values
+A body (what users see)
 
+The body is where learning really happens.
 
-Think of it as:
+4. Headings (Titles)
 
-“Remember this value and call it by this name”
+HTML has 6 heading levels.
 
+Purpose:
 
-4. Data Types (Kinds of Information)
-Python understands different kinds of data:
+Organize content
 
+Help search engines
 
-Numbers → used for math
+Improve readability
 
+Big idea:
 
-Text → used for words and sentences
+Use headings in order
 
-
-Boolean → only True or False
-
-
-Lists → group of many values together
-
-
-Why this matters:
-
-Python treats numbers and text differently.
-
-
-5. Input and Output
-
-
-Input: getting information from the user
-
-
-Output: showing information on the screen
-
+Don’t skip levels just for size
 
 Example idea:
 
-Ask the user their name → show a greeting
+Main title
+  Section title
+    Small section title
 
+5. Paragraphs (Text Content)
 
-6. Conditions (Making Decisions)
-Python can make decisions.
-It can check:
+Paragraphs are used for normal text.
 
+Important behavior:
 
-Is something equal?
+Browser ignores extra spaces
 
+New lines don’t matter unless told
 
-Is it bigger or smaller?
+That’s why formatting matters.
 
+6. Line Breaks and Spacing
 
-Is it true or false?
+HTML ignores:
 
+Extra spaces
 
-This helps in:
+Extra new lines
 
+To control spacing:
 
-Games (win or lose)
+Line break → forces a new line
 
+Horizontal line → separates content
 
-Login systems
+This is why beginners get confused 😅
 
+7. Text Formatting (Meaning, Not Just Style)
 
-Grading marks
+HTML formatting tags add meaning.
 
+Examples of meaning:
 
+Important text
 
-7. Loops (Repeating Work)
-Loops are used when you want to repeat something.
-Examples of when loops are useful:
+Emphasized text
 
+Highlighted text
 
-Counting numbers
+Good practice:
 
+Use tags for meaning, not decoration
 
-Repeating a task many times
+CSS handles decoration later
 
+8. Lists (Very Important)
 
-Going through a list of items
+Lists organize information.
 
+Two main types:
 
-Instead of writing the same thing many times, Python repeats it for you.
+Ordered list → numbered
 
-8. Functions (Reusable Actions)
-A function is a small machine that:
+Unordered list → bullets
 
+Lists are used everywhere:
 
-Does one job
+Menus
 
+Steps
 
-Can be used again and again
+Features
 
+Rules
 
-Why functions are important:
+Lists can also be nested (list inside list).
 
+9. Links (Navigation)
 
-Your work becomes neat
+Links connect pages.
 
+A link needs:
 
-Easy to fix mistakes
+Text users click
 
+A destination (page, site, file)
 
-Saves time
+Links can go to:
 
+Another website
 
+Another page
 
-9. Errors (Normal Part of Learning)
-Errors are not bad.
-They mean:
+Same page section
 
-“Python didn’t understand what you meant”
+Links are the reason the web exists 🌍
 
-Common causes:
+10. Images
 
+Images make pages visual.
 
-Spelling mistakes
+Important concepts:
 
+Source → where image is
 
-Wrong order
+Alternative text → description (VERY important)
 
+Why alt text matters:
 
-Using the wrong data type
+Screen readers
 
+Image fails to load
 
-Good programmers read errors and learn from them.
+Accessibility
 
-10. How to Learn Python Faster 🚀
+11. Attributes (Extra Information)
 
+Attributes add more details to tags.
 
-Practice a little every day
+Attributes:
 
+Are written inside opening tag
 
-Understand ideas, not memorization
+Have name + value
 
+Used for:
 
-Break problems into small steps
+Links
 
+Images
 
-Don’t fear errors
+Inputs
 
+Styling hooks
 
+Think of attributes as settings for a tag.
 
-Your Next Step
-If you want, I can:
+12. Containers (Div & Span)
 
+Containers group content.
 
-Teach Python step by step like a game
+One is block-level (takes full width)
 
+One is inline (takes only needed space)
 
-Explain one topic per day
+Why containers matter:
 
+Layout
 
-Help you think like a programmer
+Styling
 
+Organizing sections
 
-Turn this into school-level notes (S3 / S4)
+Modern HTML still relies on them heavily.
 
+13. Semantic HTML (VERY IMPORTANT)
 
-Just tell me how you want to continue 😄;</code></pre>
+Semantic tags explain meaning, not appearance.
+
+Examples of meaning:
+
+Header
+
+Navigation
+
+Main content
+
+Footer
+
+Why this matters:
+
+Better SEO
+
+Better accessibility
+
+Cleaner code
+
+Professional websites
+
+This is how real developers write HTML.
+
+14. Tables (Structured Data)
+
+Tables are for data, not layout.
+
+Tables have:
+
+Rows
+
+Columns
+
+Headers
+
+Used for:
+
+Scores
+
+Schedules
+
+Records
+
+Comparisons
+
+Bad practice:
+❌ Using tables to design pages
+
+15. Forms (User Input)
+
+Forms collect data from users.
+
+Used for:
+
+Login
+
+Signup
+
+Search
+
+Feedback
+
+Form parts:
+
+Input fields
+
+Labels
+
+Buttons
+
+Forms talk to:
+
+Servers
+
+Databases
+
+Scripts
+
+HTML only collects, it doesn’t process.
+
+16. Inputs (Different Types)
+
+Inputs can be:
+
+Text
+
+Password
+
+Number
+
+Email
+
+Checkbox
+
+Radio
+
+Button
+
+Choosing the right input:
+
+Helps users
+
+Helps browsers
+
+Helps mobile keyboards
+
+17. Buttons
+
+Buttons trigger actions.
+
+They can:
+
+Submit forms
+
+Reset forms
+
+Run scripts (with JS later)
+
+Buttons are interactive elements.
+
+18. Comments (Invisible Notes)
+
+Comments are notes for developers.
+
+Browser ignores them
+
+Users never see them
+
+Used to explain code
+
+Very useful for learning and teamwork.
+
+19. Block vs Inline Elements
+
+Block elements:
+
+Start on new line
+
+Take full width
+
+Inline elements:
+
+Stay in same line
+
+Take only needed space
+
+Understanding this helps layout A LOT.
+
+20. HTML + CSS + JavaScript
+
+HTML alone is not enough.
+
+Roles:
+
+HTML → structure 🧱
+
+CSS → design 🎨
+
+JavaScript → behavior ⚡
+
+Modern websites need all three.
+
+21. Common Beginner Mistakes
+
+Forgetting to close tags
+
+Wrong nesting
+
+Using HTML for styling
+
+Skipping semantic tags
+
+Copy-pasting without understanding
+
+You’re already avoiding the biggest one 👍
+
+22. How to Practice HTML Properly
+
+Type everything yourself
+
+Break pages into sections
+
+View source of websites
+
+Experiment and refresh browser
+
+Learn meaning before style
+
+23. Learning Path (Smart Way)
+
+HTML basics
+
+Semantic HTML
+
+Forms
+
+Accessibility basics
+
+CSS
+
+JavaScript
+
+This is future-proof 🔥
+</pre>
     `,
     starter: `<!DOCTYPE html>
 <html lang="en">
