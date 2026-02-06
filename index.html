@@ -1022,6 +1022,239 @@ button { background: var(--primary); }</code></pre>
   alert('Clicked!');
 });</code></pre>
 <p><b>Bruno Tip:</b> Learn async/await + fetch for real apps in 2025.</p>
+<pre>⚡ JavaScript + HTML + CSS Full Beginner Notes
+1. What JavaScript Really Is
+
+JavaScript (JS) = programming language that makes web pages interactive
+
+HTML → structure (walls & doors)
+
+CSS → style (paint & decorations)
+
+JS → behavior (lights turning on, doors opening, clicks, animations)
+
+Example in words:
+
+A button is on the page (HTML) → looks red (CSS) → when clicked it shows a message (JS)
+
+2. How JS Works With HTML
+
+JS can read HTML elements, change them, or respond to user actions
+
+JS can also change styles dynamically (CSS)
+
+JS runs in the browser, line by line, top to bottom
+
+Key concepts:
+
+DOM (Document Object Model) → JS sees HTML as a tree of elements
+
+Events → JS listens to user actions (click, hover, type)
+
+Manipulation → JS can add/remove/change HTML or CSS
+
+3. Adding JS to a Page
+
+Inline JS → directly in HTML element (onclick="...")
+
+Works, but messy
+
+Internal JS → <script> in HTML <head> or end of <body>
+
+Better for small projects
+
+External JS → separate .js file, linked with <script src="file.js">
+
+Best for large projects
+
+Tip: Always put JS before closing </body> so HTML loads first
+
+4. JS Syntax Basics
+
+Statements → individual instructions, end with ; (optional in modern JS)
+
+Comments → explain code, ignored by JS
+
+Single line → //
+
+Multi-line → /* ... */
+
+Variables → store data
+
+let → changeable
+
+const → fixed
+
+var → old way (avoid)
+
+Mental example:
+
+Store a number, store a name, change number later, but name stays the same
+
+5. Data Types
+
+Numbers → integers, decimals
+
+Strings → text, written in quotes
+
+Booleans → true or false
+
+Arrays → list of values
+
+Objects → group of related values (key + value)
+
+Null / Undefined → empty or unknown values
+
+Tip: Understanding types is key to avoid mistakes like adding text + number unexpectedly
+
+6. Operators
+
+Arithmetic → +, -, *, /, % (modulus)
+
+Assignment → =, +=, -=, *=, /=
+
+Comparison → ==, ===, !=, !==, >, <, >=, <=
+
+Logical → && (and), || (or), ! (not)
+
+Example in words:
+
+Compare user input to a number → check if true or false → act accordingly
+
+7. Functions
+
+Functions = reusable blocks of code that perform a task
+
+Can take inputs (parameters) and return outputs
+
+Example in words:
+
+Function adds two numbers → returns the sum → can be used anywhere
+
+Why important:
+
+Avoids repeating code
+
+Makes programs organized
+
+Helps debugging
+
+8. Conditionals
+
+If…else statements → make decisions
+
+Switch statements → choose between many options
+
+Example in words:
+
+If user clicks button → show success
+Else → show error
+
+Tip: Learn conditions deeply — almost every interactive website uses them
+
+9. Loops
+
+For loop → repeat code a set number of times
+
+While loop → repeat while condition is true
+
+Do…while loop → same, but runs at least once
+
+Practice idea:
+
+Loop through a list of names → highlight each one
+
+Create a counter → increases on click
+
+10. Arrays (Lists)
+
+Store multiple values
+
+Access by index (starts at 0)
+
+Can change values, add/remove elements
+
+Methods: push, pop, shift, unshift, length
+
+Practice idea:
+
+Store 5 colors → loop through → apply each color to a div background dynamically
+
+11. Objects
+
+Store related data as key + value
+
+Example in words:
+
+A “car” object → brand, color, year
+
+Access: car.brand
+
+Change dynamically: car.color = "red"
+
+Tip: Objects + arrays = powerful combo for interactive pages
+
+12. DOM Manipulation
+
+Select elements: by ID, class, tag
+
+Read content: get text or attributes
+
+Change content: update text, images, links
+
+Change style: dynamically modify CSS
+
+Example in words:
+
+Select a paragraph → change its text → change its color → when button clicked
+
+13. Events
+
+Click, mouseover, mouseout, keypress, submit
+
+Event listener = function that runs when event happens
+
+Example in words:
+
+User clicks “submit” → run a function → validate input → show result
+
+Tip: Event-driven programming = heart of interactive websites
+
+14. Combining JS + HTML + CSS
+
+JS changes HTML: .innerText, .innerHTML
+
+JS changes CSS: .style.property = "value"
+
+Example in words:
+
+Click button → JS changes background color → CSS shows new color
+
+Practical exercises:
+
+Make a button → when clicked, text changes
+
+Make an input → type name → JS shows greeting
+
+Loop through array → display colored boxes
+
+15. Debugging Tips
+
+Use console.log() to see values
+
+Read errors in browser console
+
+Break problem into steps → solve one at a time
+
+16. JS + HTML + CSS Practice Roadmap
+
+Step 1: Simple alerts & console logs → learn syntax
+Step 2: Manipulate text & colors on the page → connect JS to HTML + CSS
+Step 3: User input → forms → validate & respond
+Step 4: Loops & arrays → dynamically generate content
+Step 5: Events → click, hover, keypress → interactive elements
+Step 6: Objects → store structured data → use with loops & DOM
+Step 7: Build small project → to-do list, quiz, color changer, card layout</pre>
     `,
     starter: `console.log("Hello from JavaScript!");
 const btn = document.createElement('button');
