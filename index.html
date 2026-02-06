@@ -4,9 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BRU WEB Academy | by Ineza Aime Bruno</title>
-  
+ 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&family=Roboto:wght@400;500;700&display=swap">
-  
+ 
+  <!-- Pyodide for real Python execution -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+ 
 </head>
 <body data-theme="light">
 
@@ -15,7 +18,6 @@
     <div class="brand">BRU WEB ACADEMY <small>by Ineza Aime Bruno</small></div>
     <div style="display:flex; gap:10px; flex-wrap: wrap;">
       <button class="btn" onclick="toggleTheme()">Toggle Dark Mode</button>
-      <button class="btn" onclick="toggleQuizMode()">Quiz Mode</button>
       <button class="btn" onclick="formatCode()">Format Code</button>
       <button class="btn btn-primary" onclick="runCode()">Run</button>
       <button class="btn btn-primary" id="compiler-toggle" onclick="toggleCompilerMode()">Compiler Mode</button>
@@ -63,18 +65,6 @@
     </div>
   </div>
 
-  <!-- Quiz Pane -->
-  <div id="quiz-pane" style="display:none; flex-direction:column;">
-    <div class="pane-header">
-      <span>Quiz — <span id="quiz-lang-name"></span></span>
-      <button class="btn" onclick="toggleQuizMode()">Back</button>
-    </div>
-    <div id="quiz-questions" class="scroll"></div>
-    <div style="padding:16px; text-align:center;">
-      <button class="btn btn-primary" onclick="checkQuizAnswers()">Check Answers</button>
-    </div>
-  </div>
-
   <!-- AI Modal -->
   <div id="ai-modal" onclick="closeAI()">
     <div id="ai-container" onclick="event.stopPropagation()">
@@ -90,7 +80,6 @@
     <span>© 2026 — Ineza Aime Bruno</span>
     <span>100% Browser – No API – Works Offline</span>
   </footer>
-</div>
   <style>
     :root {
       --bg: #ffffff;
@@ -105,7 +94,6 @@
       --console-text: #d4d4d4;
       --modal-bg: rgba(0,0,0,0.5);
     }
-
     [data-theme="dark"] {
       --bg: #1a1a1a;
       --text: #e0e0e0;
@@ -117,12 +105,9 @@
       --console-text: #c9d1d9;
       --modal-bg: rgba(0,0,0,0.7);
     }
-
     * { box-sizing: border-box; margin:0; padding:0; }
     html, body { height: 100%; font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
-
     .app { height: 100vh; display: flex; flex-direction: column; }
-
     header {
       height: 54px;
       background: var(--lightgray);
@@ -132,10 +117,8 @@
       align-items: center;
       justify-content: space-between;
     }
-
     .brand { font-weight: 700; color: var(--accent); }
     .brand small { font-weight: normal; color: var(--gray); font-size: 12px; margin-left: 8px; }
-
     .btn {
       padding: 6px 14px;
       border: 1px solid var(--border);
@@ -145,20 +128,15 @@
       cursor: pointer;
       font-size: 13px;
     }
-
     .btn:hover { background: rgba(0,0,0,0.06); }
     .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
     .btn-primary:hover { background: var(--accent-dark); }
-
     .main { flex: 1; display: flex; overflow: hidden; }
-
     .pane { display: flex; flex-direction: column; background: var(--lightgray); border-right: 1px solid var(--border); }
     #docs { width: 320px; min-width: 280px; }
     #editor-pane { flex: 1; min-width: 500px; background: var(--editor-bg); }
-
     .resizer { width: 5px; background: var(--border); cursor: col-resize; }
     .resizer:hover { background: var(--accent); }
-
     .pane-header {
       padding: 10px 16px;
       background: var(--lightgray);
@@ -170,7 +148,6 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .lang-buttons {
       display: flex;
       flex-wrap: wrap;
@@ -181,7 +158,6 @@
       overflow-y: auto;
       max-height: 140px;
     }
-
     .lang-btn {
       padding: 6px 12px;
       font-size: 12px;
@@ -191,15 +167,12 @@
       border-radius: 4px;
       cursor: pointer;
     }
-
     .lang-btn.active, .lang-btn:hover {
       border-color: var(--accent);
       color: var(--accent);
       background: rgba(4,170,109,0.08);
     }
-
     .scroll { flex: 1; overflow-y: auto; padding: 20px; line-height: 1.6; font-size: 14px; }
-
     #editor, #compiler-editor {
       flex: 1;
       width: 100%;
@@ -214,16 +187,13 @@
       resize: none;
       tab-size: 2;
     }
-
     .preview-area {
       height: 38%;
       border-top: 1px solid var(--border);
       position: relative;
       background: white;
     }
-
     iframe { width: 100%; height: 100%; border: none; }
-
     #console, #compiler-output {
       position: absolute;
       inset: 0;
@@ -236,7 +206,6 @@
       white-space: pre-wrap;
       margin: 0;
     }
-
     footer {
       height: 34px;
       background: var(--lightgray);
@@ -248,12 +217,10 @@
       align-items: center;
       justify-content: space-between;
     }
-
     #compiler-mode { display: none; flex: 1; flex-direction: row; }
     #code-input-pane { flex: 1; display: flex; flex-direction: column; background: var(--editor-bg); border-right: 1px solid var(--border); }
     #output-pane { flex: 1; display: flex; flex-direction: column; background: var(--bg); }
     #compiler-preview { flex: 1; border: none; display: none; }
-
     #ai-modal {
       display: none;
       position: fixed;
@@ -263,7 +230,6 @@
       justify-content: center;
       align-items: center;
     }
-
     #ai-container {
       width: 90%;
       height: 90%;
@@ -273,20 +239,19 @@
       display: flex;
       flex-direction: column;
     }
-
     #ai-header {
       padding: 10px;
       background: var(--lightgray);
       display: flex;
       justify-content: space-between;
     }
-
     #ai-iframe { flex: 1; border: none; }
   </style>
+</div>
 
 <script>
 // ────────────────────────────────────────────────
-// Language data (deep explanations + quiz)
+// Language data – massively expanded with W3Schools-style teaching content
 // ────────────────────────────────────────────────
 const languages = [
   "html", "css", "javascript", "sql", "php", "python",
@@ -296,145 +261,1265 @@ const languages = [
 
 const content = {
   html: {
-    title: "HTML5 – Structure of the Web",
+    title: "HTML Tutorial",
     text: `
-<p><b>HTML</b> (HyperText Markup Language) is the standard language for creating web pages. It defines the structure and content using tags.</p>
+<h2>HTML Tutorial</h2>
+<p>HTML is the standard markup language for creating Web pages.</p>
+<p>With HTML you can create your own Website.</p>
+<h3>HTML is easy to learn - You will enjoy it!</h3>
 
-<h4>Core Concepts</h4>
+<h3>What is HTML?</h3>
 <ul>
-  <li><code>&lt;!DOCTYPE html&gt;</code> – tells browser it's HTML5</li>
-  <li><code>&lt;html lang="en"&gt;</code> – root element</li>
-  <li><code>&lt;head&gt;</code> – metadata (title, charset, viewport)</li>
-  <li><code>&lt;body&gt;</code> – visible content</li>
+  <li>HTML stands for <strong>Hyper Text Markup Language</strong></li>
+  <li>HTML is the standard markup language for creating Web pages</li>
+  <li>HTML describes the structure of a Web page</li>
+  <li>HTML consists of a series of elements</li>
+  <li>HTML elements tell the browser how to display the content</li>
+  <li>HTML elements label pieces of content such as "this is a heading", "this is a paragraph", "this is a link", etc.</li>
 </ul>
 
-<h4>Semantic Tags (very important in 2025+)</h4>
+<h3>A Simple HTML Document</h3>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Page Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;My First Heading&lt;/h1&gt;
+&lt;p&gt;My first paragraph.&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<h3>Example Explained</h3>
 <ul>
-  <li><code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code></li>
-  <li><code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code></li>
+  <li>The <code>&lt;!DOCTYPE html&gt;</code> declaration defines that this document is an HTML5 document</li>
+  <li>The <code>&lt;html&gt;</code> element is the root element of an HTML page</li>
+  <li>The <code>lang="en"</code> attribute declares the language of the document</li>
+  <li>The <code>&lt;head&gt;</code> element contains meta information about the HTML page</li>
+  <li>The <code>&lt;meta charset="UTF-8"&gt;</code> element defines the character set</li>
+  <li>The <code>&lt;meta name="viewport"&gt;</code> element makes the web page responsive on mobile devices</li>
+  <li>The <code>&lt;title&gt;</code> element specifies a title for the HTML page (shown in browser tab)</li>
+  <li>The <code>&lt;body&gt;</code> element defines the document's body, and is a container for all visible contents</li>
+  <li>The <code>&lt;h1&gt;</code> element defines a large heading</li>
+  <li>The <code>&lt;p&gt;</code> element defines a paragraph</li>
 </ul>
 
-<h4>Forms & Input</h4>
-<pre><code>&lt;input type="email" required placeholder="you@email.com"&gt;</code></pre>
+<h3>HTML Editors</h3>
+<p>You can write HTML using a simple text editor (Notepad, VS Code, Sublime Text, etc.) or use online editors like:</p>
+<ul>
+  <li>CodePen</li>
+  <li>JSFiddle</li>
+  <li>Replit</li>
+  <li>Glitch</li>
+  <li>CodeSandbox</li>
+</ul>
+<p><strong>Bruno Tip:</strong> VS Code with Live Server extension is perfect for beginners — see changes instantly.</p>
 
-<p><b>Bruno Tip:</b> Always use semantic tags → better SEO, accessibility, future-proof code.</p>
+<h3>HTML Basic Tags & Elements</h3>
+<table style="width:100%; border-collapse:collapse; margin:20px 0;">
+  <tr style="background:#f1f1f1;">
+    <th style="border:1px solid #ddd; padding:8px;">Tag</th>
+    <th style="border:1px solid #ddd; padding:8px;">Description</th>
+    <th style="border:1px solid #ddd; padding:8px;">Example</th>
+  </tr>
+  <tr>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;h1&gt; to &lt;h6&gt;</code></td>
+    <td style="border:1px solid #ddd; padding:8px;">Headings (h1 most important)</td>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;h1&gt;Main Title&lt;/h1&gt;</code></td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;p&gt;</code></td>
+    <td style="border:1px solid #ddd; padding:8px;">Paragraph</td>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;p&gt;This is text.&lt;/p&gt;</code></td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;a&gt;</code></td>
+    <td style="border:1px solid #ddd; padding:8px;">Hyperlink</td>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;a href="url"&gt;Link&lt;/a&gt;</code></td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;img&gt;</code></td>
+    <td style="border:1px solid #ddd; padding:8px;">Image</td>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;img src="pic.jpg" alt="description"&gt;</code></td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;br&gt;</code></td>
+    <td style="border:1px solid #ddd; padding:8px;">Line break</td>
+    <td style="border:1px solid #ddd; padding:8px;"><code>This&lt;br&gt;is&lt;br&gt;a new line.</code></td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;hr&gt;</code></td>
+    <td style="border:1px solid #ddd; padding:8px;">Horizontal rule (line)</td>
+    <td style="border:1px solid #ddd; padding:8px;"><code>&lt;hr&gt;</code></td>
+  </tr>
+</table>
+
+<h3>HTML Attributes – Global & Specific</h3>
+<ul>
+  <li><strong>Global attributes</strong> (can be used on any element): id, class, style, title, lang, dir, tabindex, accesskey</li>
+  <li><strong>Important specific attributes</strong>:
+    <ul>
+      <li><code>href</code> – for <code>&lt;a&gt;</code></li>
+      <li><code>src</code> and <code>alt</code> – for <code>&lt;img&gt;</code></li>
+      <li><code>type</code> – for <code>&lt;input&gt;</code> (text, password, email, number, checkbox, radio, submit, etc.)</li>
+      <li><code>required</code>, <code>placeholder</code>, <code>pattern</code> – form validation</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>Semantic HTML (Modern Standard – 2025+)</h3>
+<p>Using semantic tags instead of generic <code>&lt;div&gt;</code> helps search engines, accessibility tools (screen readers), and developers.</p>
+<ul>
+  <li><code>&lt;header&gt;</code> – introductory content or navigation</li>
+  <li><code>&lt;nav&gt;</code> – navigation links</li>
+  <li><code>&lt;main&gt;</code> – primary content</li>
+  <li><code>&lt;article&gt;</code> – independent content (blog post, news article)</li>
+  <li><code>&lt;section&gt;</code> – thematic grouping</li>
+  <li><code>&lt;aside&gt;</code> – sidebar content</li>
+  <li><code>&lt;footer&gt;</code> – footer content</li>
+</ul>
+<p><strong>Bruno Tip:</strong> Always use semantic tags when possible — improves SEO, accessibility, maintainability.</p>
+
+<h3>Forms – User Input</h3>
+<p>Forms are used to collect user input.</p>
+<pre><code>&lt;form action="/submit" method="post"&gt;
+  &lt;label for="fname"&gt;First name:&lt;/label&gt;&lt;br&gt;
+  &lt;input type="text" id="fname" name="fname" required&gt;&lt;br&gt;
+  &lt;label for="email"&gt;Email:&lt;/label&gt;&lt;br&gt;
+  &lt;input type="email" id="email" name="email" placeholder="you@example.com"&gt;&lt;br&gt;&lt;br&gt;
+  &lt;input type="submit" value="Submit"&gt;
+&lt;/form&gt;</code></pre>
+
+<h3>HTML5 New Input Types</h3>
+<ul>
+  <li><code>type="email"</code></li>
+  <li><code>type="url"</code></li>
+  <li><code>type="date"</code></li>
+  <li><code>type="number"</code></li>
+  <li><code>type="range"</code></li>
+  <li><code>type="search"</code></li>
+  <li><code>type="color"</code></li>
+</ul>
+
+<h3>HTML5 Semantic Elements</h3>
+<p>HTML5 introduced many new semantic elements to define different parts of a web page:</p>
+<ul>
+  <li><code>&lt;article&gt;</code></li>
+  <li><code>&lt;aside&gt;</code></li>
+  <li><code>&lt;details&gt;</code></li>
+  <li><code>&lt;figcaption&gt;</code></li>
+  <li><code>&lt;figure&gt;</code></li>
+  <li><code>&lt;footer&gt;</code></li>
+  <li><code>&lt;header&gt;</code></li>
+  <li><code>&lt;main&gt;</code></li>
+  <li><code>&lt;mark&gt;</code></li>
+  <li><code>&lt;nav&gt;</code></li>
+  <li><code>&lt;section&gt;</code></li>
+  <li><code>&lt;summary&gt;</code></li>
+  <li><code>&lt;time&gt;</code></li>
+</ul>
+
+<h3>HTML Graphics</h3>
+<ul>
+  <li><code>&lt;canvas&gt;</code> – draw graphics via JavaScript</li>
+  <li><code>&lt;svg&gt;</code> – scalable vector graphics</li>
+</ul>
+
+<h3>HTML APIs</h3>
+<ul>
+  <li>Geolocation</li>
+  <li>Drag and Drop</li>
+  <li>Web Storage</li>
+  <li>Web Workers</li>
+  <li>WebSockets</li>
+</ul>
+
+<h3>HTML Web Storage</h3>
+<p>Web storage allows web applications to store data locally within the user's browser.</p>
+
+<h3>HTML Application Cache</h3>
+<p>With application cache, a web application is cached, and accessible without an internet connection.</p>
+
+<h3>HTML Web Workers</h3>
+<p>A web worker is a JavaScript running in the background, without affecting the performance of the page.</p>
+
+<h3>HTML SSE API</h3>
+<p>Server-Sent Events (SSE) allow a web page to get updates from a server.</p>
+
+<h3>HTML Forms</h3>
+<p>HTML forms are required when you want to collect some data from the site visitor.</p>
+
+<h3>HTML Form Attributes</h3>
+<p>The <code>action</code> attribute specifies where to send the form-data when a form is submitted.</p>
+
+<h3>HTML Form Elements</h3>
+<ul>
+  <li><code>&lt;input&gt;</code></li>
+  <li><code>&lt;textarea&gt;</code></li>
+  <li><code>&lt;button&gt;</code></li>
+  <li><code>&lt;select&gt;</code></li>
+  <li><code>&lt;option&gt;</code></li>
+  <li><code>&lt;optgroup&gt;</code></li>
+  <li><code>&lt;fieldset&gt;</code></li>
+  <li><code>&lt;legend&gt;</code></li>
+  <li><code>&lt;datalist&gt;</code></li>
+  <li><code>&lt;output&gt;</code></li>
+</ul>
+
+<p><strong>Bruno's Advice:</strong> Always write valid HTML. Use semantic tags. Validate your code using https://validator.w3.org/. Practice daily!</p>
     `,
     starter: `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Demo</title>
 </head>
 <body>
-  <h1>Hello from BRU Academy</h1>
-  <p>Success is engineered.</p>
+  <header>
+    <h1>BRU HTML Learning</h1>
+    <nav>
+      <a href="#">Home</a> | <a href="#">About</a> | <a href="#">Contact</a>
+    </nav>
+  </header>
+  <main>
+    <article>
+      <h2>Article Example</h2>
+      <p>This is an independent article.</p>
+    </article>
+    <aside>
+      <h3>Sidebar</h3>
+      <p>Related links or ads.</p>
+    </aside>
+  </main>
+  <footer>
+    <p>© 2026 Ineza Aime Bruno</p>
+  </footer>
 </body>
-</html>`,
-    quiz: [
-      { q: "What does HTML stand for?", a: "HyperText Markup Language", opts: ["HyperText Machine Language", "High Text Markup Language", "HyperText Markup Language", "Home Tool Markup Language"] },
-      { q: "Which tag is the root element?", a: "<html>", opts: ["<body>", "<head>", "<html>", "<page>"] },
-      { q: "Best tag for main navigation?", a: "<nav>", opts: ["<menu>", "<nav>", "<sidebar>", "<links>"] }
-    ]
+</html>`
   },
-
   css: {
-    title: "CSS3 – Styling & Layout",
+    title: "CSS Tutorial",
     text: `
-<p><b>CSS</b> controls how HTML looks: colors, sizes, positions, animations.</p>
+<h2>CSS Tutorial</h2>
+<p>CSS stands for Cascading Style Sheets</p>
+<p>CSS describes how HTML elements are to be displayed on screen, paper, or in other media</p>
+<p>CSS saves a lot of work. It can control the layout of multiple web pages all at once</p>
+<p>External stylesheets are stored in CSS files</p>
 
-<h4>Selectors</h4>
+<h3>Why Use CSS?</h3>
 <ul>
-  <li>Element: <code>p { color: blue; }</code></li>
-  <li>Class: <code>.box { }</code></li>
-  <li>ID: <code>#header { }</code></li>
+  <li>CSS saves a lot of work</li>
+  <li>It can control the layout of multiple web pages all at once</li>
+  <li>External stylesheets are stored in CSS files</li>
 </ul>
 
-<h4>Modern Layouts</h4>
+<h3>CSS Syntax</h3>
+<p>A CSS rule-set consists of a selector and a declaration block:</p>
+<pre><code>selector {
+  property: value;
+  property: value;
+}</code></pre>
+
+<h3>CSS Comments</h3>
+<pre><code>/* This is a single-line comment */
+
+/* This is
+a multi-line
+comment */</code></pre>
+
+<h3>CSS Selectors</h3>
+<h4>The element Selector</h4>
+<pre><code>p {
+  text-align: center;
+  color: red;
+}</code></pre>
+
+<h4>The id Selector</h4>
+<pre><code>#para1 {
+  text-align: center;
+  color: red;
+}</code></pre>
+
+<h4>The class Selector</h4>
+<pre><code>.center {
+  text-align: center;
+  color: red;
+}</code></pre>
+
+<h4>Grouping Selector</h4>
+<pre><code>h1, h2, p {
+  text-align: center;
+  color: red;
+}</code></pre>
+
+<h3>How To Add CSS</h3>
+<ol>
+  <li>Inline CSS – inside HTML element style attribute</li>
+  <li>Internal CSS – inside <code>&lt;style&gt;</code> element in <code>&lt;head&gt;</code></li>
+  <li>External CSS – using <code>&lt;link&gt;</code> tag</li>
+</ol>
+
+<h3>CSS Colors</h3>
 <ul>
-  <li>Flexbox: <code>display: flex;</code></li>
-  <li>Grid: <code>display: grid; grid-template-columns: 1fr 1fr;</code></li>
+  <li>Color names: red, blue, green</li>
+  <li>HEX: #ff0000</li>
+  <li>RGB: rgb(255,0,0)</li>
+  <li>RGBA: rgba(255,0,0,0.5)</li>
+  <li>HSL: hsl(0,100%,50%)</li>
 </ul>
 
-<h4>Variables (Custom Properties)</h4>
-<pre><code>:root { --primary: #04AA6D; }
-button { background: var(--primary); }</code></pre>
+<h3>CSS Backgrounds</h3>
+<pre><code>body {
+  background-color: #f1f1f1;
+  background-image: url("bg.jpg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}</code></pre>
 
-<p><b>Bruno Tip:</b> Master Flexbox + Grid in 2025 – most websites use them.</p>
+<h3>CSS Borders</h3>
+<pre><code>p {
+  border: 2px solid #04AA6D;
+  border-radius: 10px;
+  padding: 15px;
+}</code></pre>
+
+<h3>CSS Margins & Padding</h3>
+<pre><code>div {
+  margin: 25px 50px 75px 100px;  /* top right bottom left */
+  padding: 20px;
+}</code></pre>
+
+<h3>CSS Box Model</h3>
+<p>Margin → Border → Padding → Content</p>
+<p>Use <code>box-sizing: border-box;</code> to include padding and border in element's total width/height.</p>
+
+<h3>CSS Display & Position</h3>
+<ul>
+  <li><code>display: block;</code> / <code>inline</code> / <code>inline-block</code> / <code>none</code> / <code>flex</code> / <code>grid</code></li>
+  <li><code>position: static</code> (default) / <code>relative</code> / <code>absolute</code> / <code>fixed</code> / <code>sticky</code></li>
+</ul>
+
+<h3>CSS Flexbox</h3>
+<pre><code>.container {
+  display: flex;
+  flex-direction: row | column | row-reverse;
+  justify-content: flex-start | center | space-between | space-around;
+  align-items: stretch | center | flex-start | flex-end;
+  gap: 20px;
+}</code></pre>
+
+<h3>CSS Grid</h3>
+<pre><code>.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  gap: 20px;
+  grid-auto-rows: minmax(100px, auto);
+}</code></pre>
+
+<h3>CSS Media Queries</h3>
+<pre><code>@media only screen and (max-width: 600px) {
+  body { background-color: lightblue; }
+  .container { flex-direction: column; }
+}</code></pre>
+
+<h3>CSS Animations</h3>
+<pre><code>@keyframes example {
+  from {background-color: red;}
+  to {background-color: yellow;}
+}
+
+div {
+  animation-name: example;
+  animation-duration: 4s;
+}</code></pre>
+
+<h3>CSS Variables</h3>
+<pre><code>:root {
+  --main-bg: #f1f1f1;
+  --main-color: #04AA6D;
+}
+body { background: var(--main-bg); }
+h1 { color: var(--main-color); }</code></pre>
+
+<p><strong>Bruno's Advice:</strong> Master Flexbox and Grid first. Use browser dev tools (F12) to inspect and experiment. Avoid !important whenever possible.</p>
     `,
-    starter: `body { font-family: Arial; background: #f8f9fa; }
-.card { 
-  width: 300px; margin: 40px auto; 
-  padding: 20px; border-radius: 8px; 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-}`,
-    quiz: [
-      { q: "What does CSS stand for?", a: "Cascading Style Sheets", opts: ["Creative Style Sheets", "Computer Style Sheets", "Cascading Style Sheets", "Colorful Style System"] },
-      { q: "Property to center items in flex?", a: "justify-content: center;", opts: ["align-items", "justify-content", "center-items", "flex-center"] }
-    ]
-  },
+    starter: `/* CSS Example */
+:root {
+  --primary: #04AA6D;
+  --spacing: 20px;
+}
 
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  margin: 0;
+  padding: var(--spacing);
+  color: #333;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing);
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 24px;
+  flex: 1 1 300px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background: #038c5a;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+}`
+  },
   javascript: {
-    title: "JavaScript – Making Websites Interactive",
+    title: "JavaScript Tutorial",
     text: `
-<p><b>JavaScript (ES6+)</b> adds logic, events, DOM manipulation, async operations.</p>
+<h2>JavaScript Tutorial</h2>
+<p>JavaScript is the programming language of the Web.</p>
+<p>JavaScript is easy to learn.</p>
+<p>This tutorial will teach you JavaScript from basic to advanced.</p>
 
-<h4>Modern Features</h4>
+<h3>JavaScript Can Change HTML Content</h3>
+<p>One of many JavaScript HTML methods is <code>getElementById()</code>.</p>
+<pre><code>document.getElementById("demo").innerHTML = "Paragraph changed.";</code></pre>
+
+<h3>JavaScript Can Change HTML Attribute Values</h3>
+<p>In this example JavaScript changes the value of the <code>src</code> attribute of an image.</p>
+
+<h3>JavaScript Can Change HTML Styles (CSS)</h3>
+<pre><code>document.getElementById("demo").style.fontSize = "35px";
+document.getElementById("demo").style.color = "red";</code></pre>
+
+<h3>JavaScript Can Hide HTML Elements</h3>
+<pre><code>document.getElementById("demo").style.display = "none";</code></pre>
+
+<h3>JavaScript Can Show HTML Elements</h3>
+<pre><code>document.getElementById("demo").style.display = "block";</code></pre>
+
+<h3>JavaScript Variables</h3>
+<p>Variables are containers for storing data values.</p>
+<pre><code>let x = 5;
+let y = 6;
+let z = x + y;</code></pre>
+
+<h3>JavaScript Data Types</h3>
 <ul>
-  <li>const / let</li>
-  <li>Arrow functions: <code>() => {}</code></li>
-  <li>Template literals: <code>\`Hello \${name}\`</code></li>
-  <li>Destructuring, spread: <code>{...obj}</code></li>
-  <li>async / await</li>
+  <li>String</li>
+  <li>Number</li>
+  <li>BigInt</li>
+  <li>Boolean</li>
+  <li>Undefined</li>
+  <li>Null</li>
+  <li>Symbol</li>
+  <li>Object</li>
 </ul>
 
-<h4>DOM Example</h4>
-<pre><code>document.querySelector('button').addEventListener('click', () => {
-  alert('Clicked!');
-});</code></pre>
+<h3>JavaScript Functions</h3>
+<p>A JavaScript function is a block of code designed to perform a particular task.</p>
+<pre><code>function myFunction(p1, p2) {
+  return p1 * p2;
+}</code></pre>
 
-<p><b>Bruno Tip:</b> Learn async/await + fetch for real apps in 2025.</p>
+<h3>JavaScript Objects</h3>
+<p>JavaScript objects are containers for named values called properties or methods.</p>
+
+<h3>JavaScript Events</h3>
+<p>HTML allows event handler attributes, with JavaScript code, to be added to HTML elements.</p>
+
+<h3>JavaScript Strings</h3>
+<p>JavaScript strings are for storing and manipulating text.</p>
+
+<h3>JavaScript Numbers</h3>
+<p>JavaScript has only one type of number. Numbers can be written with, or without decimals.</p>
+
+<h3>JavaScript BigInt</h3>
+<p>JavaScript BigInt is a new datatype (ES2020) that can be used to store integer values that are too big to be represented by a normal JavaScript Number.</p>
+
+<h3>JavaScript Booleans</h3>
+<p>JavaScript booleans can have one of two values: true or false.</p>
+
+<h3>JavaScript Operators</h3>
+<p>JavaScript operators are used to assign values, compare values, perform arithmetic operations, and more.</p>
+
+<h3>JavaScript Assignment Operators</h3>
+<p>Assignment operators assign values to JavaScript variables.</p>
+
+<h3>JavaScript Comparison Operators</h3>
+<p>Comparison operators are used in logical statements to determine equality or difference between variables or values.</p>
+
+<h3>JavaScript Logical Operators</h3>
+<p>Logical operators are used to determine the logic between variables or values.</p>
+
+<h3>JavaScript Bitwise Operators</h3>
+<p>Bitwise operators work on 32 bits numbers.</p>
+
+<h3>JavaScript If ... Else</h3>
+<p>Use if() to specify a block of code to be executed, if a specified condition is true</p>
+
+<h3>JavaScript Switch</h3>
+<p>Use the switch statement to select one of many code blocks to be executed.</p>
+
+<h3>JavaScript Loops</h3>
+<p>Loops are handy, if you want to run the same code over and over again, each time with a different value.</p>
+
+<h3>JavaScript For Loop</h3>
+<p>The for statement creates a loop with 3 optional expressions.</p>
+
+<h3>JavaScript While Loop</h3>
+<p>The while loop loops through a block of code as long as a specified condition is true.</p>
+
+<h3>JavaScript Break and Continue</h3>
+<p>The break statement "jumps out" of a loop.</p>
+<p>The continue statement "jumps over" one iteration in the loop.</p>
+
+<h3>JavaScript Arrays</h3>
+<p>JavaScript arrays are used to store multiple values in a single variable.</p>
+
+<h3>JavaScript Array Methods</h3>
+<p>JavaScript has many built-in array methods.</p>
+
+<h3>JavaScript Array Sort</h3>
+<p>The sort() method sorts an array alphabetically.</p>
+
+<h3>JavaScript Dates</h3>
+<p>The Date object lets you work with dates (years, months, days, hours, minutes, seconds, milliseconds).</p>
+
+<h3>JavaScript Math</h3>
+<p>The Math object allows you to perform mathematical tasks.</p>
+
+<h3>JavaScript Booleans</h3>
+<p>JavaScript booleans can have one of two values: true or false.</p>
+
+<h3>JavaScript Comparisons</h3>
+<p>Comparison and Logical operators are used to test for true or false.</p>
+
+<h3>JavaScript Conditions</h3>
+<p>You can use conditional statements in your code to do different actions based on different conditions.</p>
+
+<h3>JavaScript Switch</h3>
+<p>Use the switch statement to select one of many code blocks to be executed.</p>
+
+<h3>JavaScript Loops</h3>
+<p>Loops are handy, if you want to run the same code over and over again, each time with a different value.</p>
+
+<h3>JavaScript Functions</h3>
+<p>A JavaScript function is a block of code designed to perform a particular task.</p>
+
+<h3>JavaScript Objects</h3>
+<p>JavaScript objects are containers for named values called properties or methods.</p>
+
+<h3>JavaScript Scope</h3>
+<p>JavaScript has 3 types of scope: Block scope, Function scope, Global scope.</p>
+
+<h3>JavaScript Hoisting</h3>
+<p>Hoisting is JavaScript's default behavior of moving declarations to the top.</p>
+
+<h3>JavaScript Strict Mode</h3>
+<p>The "use strict" directive was new in ECMAScript version 5.</p>
+
+<h3>JavaScript this Keyword</h3>
+<p>What is this? The JavaScript this keyword refers to the object it belongs to.</p>
+
+<h3>JavaScript Arrow Functions</h3>
+<p>Arrow functions were introduced in ES6.</p>
+
+<h3>JavaScript Classes</h3>
+<p>JavaScript Classes are templates for JavaScript Objects.</p>
+
+<h3>JavaScript JSON</h3>
+<p>JSON is a format for storing and transporting data.</p>
+
+<h3>JavaScript Debugging</h3>
+<p>JavaScript debugging is the process of finding and fixing errors in your code.</p>
+
+<h3>JavaScript Style Guide</h3>
+<p>Always use the same coding conventions in your projects.</p>
+
+<h3>JavaScript Best Practices</h3>
+<p>Avoid Global Variables, Declarations on Top, Initialize Variables, etc.</p>
+
+<h3>JavaScript Common Mistakes</h3>
+<p>Common JavaScript programming mistakes.</p>
+
+<h3>JavaScript Performance</h3>
+<p>How to speed up your JavaScript code.</p>
+
+<h3>JavaScript Reserved Words</h3>
+<p>JavaScript has a number of reserved words that you cannot use as identifiers.</p>
+
+<p><strong>Bruno's Advice:</strong> Learn JavaScript fundamentals first. Practice DOM manipulation. Use modern ES6+ features.</p>
     `,
-    starter: `console.log("Hello from JavaScript!");
+    starter: `console.log("Hello JavaScript!");
 
-const btn = document.createElement('button');
-btn.textContent = "Click me";
-btn.onclick = () => alert("You clicked!");
-document.body.appendChild(btn);`,
-    quiz: [
-      { q: "Which declares a constant?", a: "const", opts: ["var", "let", "const", "final"] },
-      { q: "How to get element by ID?", a: "document.getElementById", opts: ["querySelector", "getElementById", "findById", "select"] }
-    ]
+let name = "Ineza";
+let age = 22;
+console.log(\`My name is \${name} and I am \${age} years old.\`);
+
+function greet(person) {
+  return "Hello, " + person + "!";
+}
+
+console.log(greet("Bruno"));
+
+// DOM example
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.style.backgroundColor = "#f8f9fa";
+  const h1 = document.createElement("h1");
+  h1.textContent = "Welcome to JavaScript";
+  h1.style.color = "#04AA6D";
+  document.body.appendChild(h1);
+});`
   },
 
-  // You can continue adding more languages with similar structure
-  // For now we include just 3 to keep code short – add others when you want
+  sql: {
+    title: "SQL Tutorial",
+    text: `
+<h2>SQL Tutorial</h2>
+<p>SQL is a standard language for accessing and manipulating databases.</p>
+
+<h3>What is SQL?</h3>
+<ul>
+  <li>SQL stands for Structured Query Language</li>
+  <li>SQL lets you access and manipulate databases</li>
+  <li>SQL is an ANSI (American National Standards Institute) standard</li>
+</ul>
+
+<h3>What Can SQL do?</h3>
+<ul>
+  <li>SQL can execute queries against a database</li>
+  <li>SQL can retrieve data from a database</li>
+  <li>SQL can insert records in a database</li>
+  <li>SQL can update records in a database</li>
+  <li>SQL can delete records from a database</li>
+  <li>SQL can create new databases</li>
+  <li>SQL can create new tables in a database</li>
+  <li>SQL can create stored procedures in a database</li>
+  <li>SQL can create views in a database</li>
+  <li>SQL can set permissions on tables, procedures, and views</li>
+</ul>
+
+<h3>SQL Database</h3>
+<p>RDBMS = Relational Database Management System</p>
+<p>RDBMS is the basis for SQL, and for all modern database systems such as MS SQL Server, IBM DB2, Oracle, MySQL, and Microsoft Access.</p>
+
+<h3>SQL SELECT Statement</h3>
+<p>The SELECT statement is used to select data from a database.</p>
+<pre><code>SELECT * FROM Customers;</code></pre>
+
+<h3>SQL SELECT DISTINCT Statement</h3>
+<p>The SELECT DISTINCT statement is used to return only distinct (different) values.</p>
+<pre><code>SELECT DISTINCT Country FROM Customers;</code></pre>
+
+<h3>SQL WHERE Clause</h3>
+<p>The WHERE clause is used to filter records.</p>
+<pre><code>SELECT * FROM Customers WHERE Country='Mexico';</code></pre>
+
+<h3>SQL AND, OR, NOT Operators</h3>
+<p>The WHERE clause can be combined with AND, OR, and NOT operators.</p>
+<pre><code>SELECT * FROM Customers
+WHERE Country='Germany' AND City='Berlin';</code></pre>
+
+<h3>SQL ORDER BY Keyword</h3>
+<p>The ORDER BY keyword is used to sort the result-set in ascending or descending order.</p>
+<pre><code>SELECT * FROM Customers ORDER BY CustomerName ASC;</code></pre>
+
+<h3>SQL INSERT INTO Statement</h3>
+<p>The INSERT INTO statement is used to insert new records in a table.</p>
+<pre><code>INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
+VALUES ('Cardinal','Tom B. Erichsen','Skagen 21','Stavanger','4006','Norway');</code></pre>
+
+<h3>SQL UPDATE Statement</h3>
+<p>The UPDATE statement is used to modify the existing records in a table.</p>
+<pre><code>UPDATE Customers
+SET ContactName = 'Alfred Schmidt', City = 'Frankfurt'
+WHERE CustomerID = 1;</code></pre>
+
+<h3>SQL DELETE Statement</h3>
+<p>The DELETE statement is used to delete existing records in a table.</p>
+<pre><code>DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste';</code></pre>
+
+<h3>SQL SELECT TOP, LIMIT or ROWNUM Clause</h3>
+<p>The SELECT TOP clause is used to specify the number of records to return.</p>
+
+<h3>SQL MIN() and MAX() Functions</h3>
+<p>The MIN() function returns the smallest value of the selected column.</p>
+
+<h3>SQL COUNT(), AVG() and SUM() Functions</h3>
+<p>The COUNT() function returns the number of rows that matches a specified criterion.</p>
+
+<h3>SQL LIKE Operator</h3>
+<p>The LIKE operator is used in a WHERE clause to search for a specified pattern in a column.</p>
+
+<h3>SQL Wildcards</h3>
+<ul>
+  <li>% – represents zero or more characters</li>
+  <li>_ – represents a single character</li>
+  <li>[] – represents any single character within the brackets</li>
+</ul>
+
+<h3>SQL IN Operator</h3>
+<p>The IN operator allows you to specify multiple values in a WHERE clause.</p>
+
+<h3>SQL BETWEEN Operator</h3>
+<p>The BETWEEN operator selects values within a given range.</p>
+
+<h3>SQL Aliases</h3>
+<p>SQL aliases are used to give a table, or a column in a table, a temporary name.</p>
+
+<h3>SQL Joins</h3>
+<p>A JOIN clause is used to combine rows from two or more tables, based on a related column between them.</p>
+
+<h3>SQL INNER JOIN</h3>
+<p>The INNER JOIN keyword selects records that have matching values in both tables.</p>
+
+<h3>SQL LEFT JOIN</h3>
+<p>The LEFT JOIN keyword returns all records from the left table (table1), and the matching records from the right table (table2).</p>
+
+<h3>SQL RIGHT JOIN</h3>
+<p>The RIGHT JOIN keyword returns all records from the right table (table2), and the matching records from the left table (table1).</p>
+
+<h3>SQL FULL OUTER JOIN</h3>
+<p>The FULL OUTER JOIN keyword returns all records when there is a match in left (table1) or right (table2) table records.</p>
+
+<h3>SQL Self Join</h3>
+<p>A self join is a regular join, but the table is joined with itself.</p>
+
+<h3>SQL UNION Operator</h3>
+<p>The UNION operator is used to combine the result-set of two or more SELECT statements.</p>
+
+<h3>SQL GROUP BY Statement</h3>
+<p>The GROUP BY statement groups rows that have the same values into summary rows.</p>
+
+<h3>SQL HAVING Clause</h3>
+<p>The HAVING clause was added to SQL because the WHERE keyword could not be used with aggregate functions.</p>
+
+<h3>SQL EXISTS Operator</h3>
+<p>The EXISTS operator is used to test for the existence of any record in a subquery.</p>
+
+<h3>SQL ANY and ALL Operators</h3>
+<p>The ANY and ALL operators allow you to perform a comparison between a single column value and a range of other values.</p>
+
+<h3>SQL SELECT INTO Statement</h3>
+<p>The SELECT INTO statement copies data from one table into a new table.</p>
+
+<h3>SQL INSERT INTO SELECT Statement</h3>
+<p>The INSERT INTO SELECT statement copies data from one table and inserts it into another table.</p>
+
+<h3>SQL CASE Statement</h3>
+<p>The CASE statement goes through conditions and returns a value when the first condition is met.</p>
+
+<h3>SQL Null Functions</h3>
+<p>SQL ISNULL(), NVL(), IFNULL() and COALESCE() functions can also be used to test for NULL values.</p>
+
+<h3>SQL Stored Procedures</h3>
+<p>A stored procedure is a prepared SQL code that you can save, so the code can be reused over and over again.</p>
+
+<h3>SQL Comments</h3>
+<p>Comments are used to explain sections of SQL statements, or to prevent execution of SQL statements.</p>
+
+<p><strong>Bruno's Advice:</strong> Practice SQL on free online databases like DB Fiddle or SQLite Online. Master SELECT, JOIN, GROUP BY first.</p>
+    `,
+    starter: `-- SQL Examples - BRU Academy
+-- 1. Create a table
+CREATE TABLE Students (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  age INT,
+  grade DECIMAL(3,2),
+  city VARCHAR(50)
+);
+
+-- 2. Insert data
+INSERT INTO Students (first_name, last_name, age, grade, city) VALUES
+('Ineza', 'Aime', 22, 4.5, 'Kigali'),
+('Bruno', 'Ineza', 25, 4.8, 'Kigali'),
+('Alice', 'Smith', 19, 3.9, 'Huye');
+
+-- 3. Basic SELECT
+SELECT * FROM Students;
+
+-- 4. Filtered SELECT
+SELECT first_name, grade FROM Students WHERE age > 20;
+
+-- 5. ORDER BY
+SELECT * FROM Students ORDER BY grade DESC;
+
+-- 6. Aggregate functions
+SELECT AVG(grade) AS average_grade, MAX(grade) AS highest_grade FROM Students;
+
+-- 7. GROUP BY
+SELECT city, COUNT(*) AS student_count FROM Students GROUP BY city;
+
+-- 8. UPDATE
+UPDATE Students SET grade = 4.9 WHERE first_name = 'Bruno';
+
+-- 9. DELETE
+DELETE FROM Students WHERE grade < 4.0;
+
+-- 10. LIKE operator
+SELECT * FROM Students WHERE first_name LIKE 'A%';`
+  },
+
+  php: {
+    title: "PHP Tutorial",
+    text: `
+<h2>PHP Tutorial</h2>
+<p>PHP is a server scripting language, and a powerful tool for making dynamic and interactive Web pages.</p>
+<p>PHP is a widely-used, free, and efficient alternative to competitors such as Microsoft's ASP.</p>
+
+<h3>What is PHP?</h3>
+<ul>
+  <li>PHP is an acronym for "PHP: Hypertext Preprocessor"</li>
+  <li>PHP is a widely-used, open source scripting language</li>
+  <li>PHP scripts are executed on the server</li>
+  <li>PHP is free to download and use</li>
+</ul>
+
+<h3>What is a PHP File?</h3>
+<ul>
+  <li>PHP files can contain text, HTML, CSS, JavaScript, and PHP code</li>
+  <li>PHP code is executed on the server, and the result is returned to the browser as plain HTML</li>
+  <li>PHP files have extension ".php"</li>
+</ul>
+
+<h3>What Can PHP Do?</h3>
+<ul>
+  <li>PHP can generate dynamic page content</li>
+  <li>PHP can create, open, read, write, delete, and close files on the server</li>
+  <li>PHP can collect form data</li>
+  <li>PHP can send and receive cookies</li>
+  <li>PHP can add, delete, modify data in your database</li>
+  <li>PHP can be used to control user-access</li>
+  <li>PHP can encrypt data</li>
+</ul>
+
+<h3>Why PHP?</h3>
+<ul>
+  <li>PHP runs on various platforms (Windows, Linux, Unix, Mac OS X, etc.)</li>
+  <li>PHP is compatible with almost all servers used today (Apache, IIS, etc.)</li>
+  <li>PHP supports a wide range of databases</li>
+  <li>PHP is free. Download it from the official PHP resource: www.php.net</li>
+  <li>PHP is easy to learn and runs efficiently on the server side</li>
+</ul>
+
+<h3>PHP Syntax</h3>
+<p>A PHP script starts with <code>&lt;?php</code> and ends with <code>?&gt;</code>:</p>
+<pre><code>&lt;?php
+// PHP code goes here
+?&gt;</code></pre>
+
+<h3>PHP Variables</h3>
+<p>A variable starts with a $ sign, followed by the name of the variable</p>
+<pre><code>$txt = "Hello world!";
+$x = 16;</code></pre>
+
+<h3>PHP Echo / Print</h3>
+<p>With PHP, there are two basic ways to get output: echo and print.</p>
+<pre><code>echo "Hello World!";
+print "Hello World!";</code></pre>
+
+<h3>PHP Data Types</h3>
+<ul>
+  <li>String</li>
+  <li>Integer</li>
+  <li>Float</li>
+  <li>Boolean</li>
+  <li>Array</li>
+  <li>Object</li>
+  <li>NULL</li>
+  <li>Resource</li>
+</ul>
+
+<h3>PHP String Functions</h3>
+<p>PHP has many useful string functions built-in.</p>
+
+<h3>PHP Numbers</h3>
+<p>PHP has two number types: integer and float.</p>
+
+<h3>PHP Math</h3>
+<p>PHP has several math functions that allow you to perform mathematical tasks on numbers.</p>
+
+<h3>PHP Constants</h3>
+<p>A constant is an identifier (name) for a simple value.</p>
+
+<h3>PHP Operators</h3>
+<p>PHP divides the operators in the following groups:</p>
+<ul>
+  <li>Arithmetic operators</li>
+  <li>Assignment operators</li>
+  <li>Comparison operators</li>
+  <li>Increment/Decrement operators</li>
+  <li>Logical operators</li>
+  <li>String operators</li>
+  <li>Array operators</li>
+  <li>Conditional assignment operators</li>
+</ul>
+
+<h3>PHP If...Else...Elseif Statements</h3>
+<p>Conditional statements are used to perform different actions based on different conditions.</p>
+
+<h3>PHP Switch Statement</h3>
+<p>Use the switch statement to select one of many blocks of code to be executed.</p>
+
+<h3>PHP Loops</h3>
+<p>Loops execute a block of code a specified number of times, or while a specified condition is true.</p>
+
+<h3>PHP Functions</h3>
+<p>The real power of PHP comes from its functions.</p>
+
+<h3>PHP Arrays</h3>
+<p>An array stores multiple values in one single variable.</p>
+
+<h3>PHP Indexed Arrays</h3>
+<p>There are two ways to create indexed arrays.</p>
+
+<h3>PHP Associative Arrays</h3>
+<p>Associative arrays are arrays that use named keys that you assign to them.</p>
+
+<h3>PHP Multidimensional Arrays</h3>
+<p>A multidimensional array is an array containing one or more arrays.</p>
+
+<h3>PHP Sorting Arrays</h3>
+<p>The elements in an array can be sorted in alphabetical or numerical order, descending or ascending.</p>
+
+<h3>PHP Superglobals</h3>
+<p>Some predefined variables in PHP are "superglobals", which means that they are always accessible, regardless of scope.</p>
+
+<h3>PHP Forms</h3>
+<p>PHP Form Handling is the act of collecting information submitted by users.</p>
+
+<h3>PHP Form Validation</h3>
+<p>Think SECURITY when processing PHP forms!</p>
+
+<h3>PHP Form Required Fields</h3>
+<p>This chapter shows how to make input fields required and create error messages if needed.</p>
+
+<h3>PHP Form URL/E-mail</h3>
+<p>This chapter shows how to validate form input for URL and email.</p>
+
+<h3>PHP Form Complete</h3>
+<p>This chapter shows how to keep all values in the form if the user hits the submit button.</p>
+
+<h3>PHP Advanced</h3>
+<ul>
+  <li>PHP Date/Time</li>
+  <li>PHP Include</li>
+  <li>PHP File Handling</li>
+  <li>PHP File Open/Read</li>
+  <li>PHP File Create/Write</li>
+  <li>PHP File Upload</li>
+  <li>PHP Cookies</li>
+  <li>PHP Sessions</li>
+  <li>PHP Filters</li>
+  <li>PHP Filters Advanced</li>
+  <li>PHP JSON</li>
+  <li>PHP Exceptions</li>
+  <li>PHP OOP</li>
+</ul>
+
+<p><strong>Bruno's Advice:</strong> Start with basic syntax, then forms, then databases. Use XAMPP for local development.</p>
+    `,
+    starter: `<?php
+// PHP Example – BRU Academy
+echo "<h1>Welcome to PHP!</h1>";
+
+$name = "Ineza Aime Bruno";
+$age = 22;
+
+echo "<p>My name is $name and I am $age years old.</p>";
+
+// Array
+$colors = array("red", "green", "blue", "yellow");
+echo "<ul>";
+foreach ($colors as $color) {
+  echo "<li style='color:$color;'>$color</li>";
+}
+echo "</ul>";
+
+// Function
+function calculateArea($width, $height) {
+  return $width * $height;
+}
+
+$area = calculateArea(5, 10);
+echo "<p>Rectangle area: $area square units</p>";
+
+// Simple form processing example
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $username = htmlspecialchars($_POST['username']);
+  echo "<p>Hello, $username! Welcome to BRU PHP.</p>";
+}
+?>
+
+<form method="post" action="">
+  <label>Enter your name:</label>
+  <input type="text" name="username">
+  <input type="submit" value="Say Hello">
+</form>`
+  },
+
   python: {
-    title: "Python – Clean & Powerful",
-    text: `<p>Python is excellent for backend, data, AI, automation.</p>
-<p><b>Bruno Tip:</b> Use list comprehensions and f-strings.</p>`,
-    starter: `print("Hello from Python simulation!")
-names = ["Ineza", "Bruno"]
-for name in names:
-    print(f"Welcome, {name}!")`,
-    quiz: []
+    title: "Python Tutorial",
+    text: `
+<h2>Python Tutorial</h2>
+<p>Python is a popular programming language.</p>
+<p>Python can be used on a server to create web applications.</p>
+<p>Python can be used alongside software to create workflows.</p>
+<p>Python can connect to database systems. It can also read and modify files.</p>
+<p>Python can be used to handle big data and perform complex mathematics.</p>
+<p>Python can be used for rapid prototyping, or for production-ready software development.</p>
+
+<h3>Python Syntax compared to other programming languages</h3>
+<p>Python was designed for readability, and has some similarities to the English language with influence from mathematics.</p>
+<p>Python uses new lines to complete a command, as opposed to semicolons or parentheses in other programming languages.</p>
+<p>Python relies on indentation, using whitespace, to define scope; such as the scope of loops, functions and classes. Other programming languages often use curly-brackets for this purpose.</p>
+
+<h3>Python Variables</h3>
+<p>Variables are containers for storing data values.</p>
+<pre><code>x = 5
+y = "John"
+print(x)
+print(y)</code></pre>
+
+<h3>Python Comments</h3>
+<p>Comments can be used to explain Python code.</p>
+<p>Comments can be used to make the code more readable.</p>
+<p>Comments can be used to prevent execution when testing code.</p>
+
+<h3>Python Data Types</h3>
+<p>Python has the following data types built-in by default:</p>
+<ul>
+  <li>Text Type:	str</li>
+  <li>Numeric Types:	int, float, complex</li>
+  <li>Sequence Types:	list, tuple, range</li>
+  <li>Mapping Type:	dict</li>
+  <li>Set Types:	set, frozenset</li>
+  <li>Boolean Type:	bool</li>
+  <li>Binary Types:	bytes, bytearray, memoryview</li>
+  <li>None Type:	NoneType</li>
+</ul>
+
+<h3>Python Numbers</h3>
+<p>There are three numeric types in Python:</p>
+<ul>
+  <li>int</li>
+  <li>float</li>
+  <li>complex</li>
+</ul>
+
+<h3>Python Casting</h3>
+<p>There may be times when you want to specify a type on to a variable. This can be done with casting.</p>
+
+<h3>Python Strings</h3>
+<p>Strings in python are surrounded by either single quotation marks, or double quotation marks.</p>
+
+<h3>Python Booleans</h3>
+<p>Booleans represent one of two values: True or False.</p>
+
+<h3>Python Operators</h3>
+<p>Python divides the operators in the following groups:</p>
+<ul>
+  <li>Arithmetic operators</li>
+  <li>Assignment operators</li>
+  <li>Comparison operators</li>
+  <li>Logical operators</li>
+  <li>Identity operators</li>
+  <li>Membership operators</li>
+  <li>Bitwise operators</li>
+</ul>
+
+<h3>Python Lists</h3>
+<p>Lists are used to store multiple items in a single variable.</p>
+
+<h3>Python Tuples</h3>
+<p>Tuples are used to store multiple items in a single variable.</p>
+
+<h3>Python Sets</h3>
+<p>Sets are used to store multiple items in a single variable.</p>
+
+<h3>Python Dictionaries</h3>
+<p>Dictionaries are used to store data values in key:value pairs.</p>
+
+<h3>Python If ... Else</h3>
+<p>Python supports the usual logical conditions from mathematics:</p>
+
+<h3>Python While Loops</h3>
+<p>With the while loop we can execute a set of statements as long as a condition is true.</p>
+
+<h3>Python For Loops</h3>
+<p>A for loop is used for iterating over a sequence (that is either a list, a tuple, a dictionary, a set, or a string).</p>
+
+<h3>Python Functions</h3>
+<p>A function is a block of code which only runs when it is called.</p>
+
+<h3>Python Lambda</h3>
+<p>A lambda function is a small anonymous function.</p>
+
+<h3>Python Arrays</h3>
+<p>Note: Python does not have built-in support for Arrays, but Python Lists can be used instead.</p>
+
+<h3>Python Classes/Objects</h3>
+<p>Python is an object oriented programming language.</p>
+
+<h3>Python Inheritance</h3>
+<p>Inheritance allows us to define a class that inherits all the methods and properties from another class.</p>
+
+<h3>Python Iterators</h3>
+<p>An iterator is an object that contains a countable number of values.</p>
+
+<h3>Python Scope</h3>
+<p>A variable is only available from inside the region it is created. This is called scope.</p>
+
+<h3>Python Modules</h3>
+<p>Consider a module to be the same as a code library.</p>
+
+<h3>Python Dates</h3>
+<p>A date in Python is not a data type of its own, but we can import a module named datetime to work with dates as date objects.</p>
+
+<h3>Python Math</h3>
+<p>Python has a set of built-in math functions, including an extensive math module, that allows you to perform mathematical tasks on numbers.</p>
+
+<h3>Python JSON</h3>
+<p>JSON is a syntax for storing and exchanging data.</p>
+
+<h3>Python RegEx</h3>
+<p>A RegEx, or Regular Expression, is a sequence of characters that forms a search pattern.</p>
+
+<h3>Python Try ... Except</h3>
+<p>The try block lets you test a block of code for errors.</p>
+
+<h3>Python User Input</h3>
+<p>Python allows for user input.</p>
+
+<h3>Python String Formatting</h3>
+<p>To make sure a string will display as expected, you can format the result with the format() method.</p>
+
+<p><strong>Bruno's Advice:</strong> Python is perfect for beginners. Use it to automate tasks, build web apps (Django/Flask), analyze data, or create AI projects.</p>
+    `,
+    starter: `# Python – BRU Academy Demo
+print("Hello from Python in BRU Academy!")
+
+# Variables and data types
+name = "Ineza Aime Bruno"
+age = 22
+height = 1.75
+is_student = True
+
+print(f"Name: {name}")
+print(f"Age: {age}")
+print(f"Height: {height}m")
+print(f"Student: {is_student}")
+
+# List and loop
+fruits = ["apple", "banana", "cherry", "date", "elderberry"]
+print("My favorite fruits:")
+for fruit in fruits:
+    print(f"- {fruit.capitalize()}")
+
+# Function
+def calculate_bmi(weight_kg, height_m):
+    bmi = weight_kg / (height_m ** 2)
+    return round(bmi, 2)
+
+my_bmi = calculate_bmi(70, 1.75)
+print(f"My BMI: {my_bmi}")
+
+# Conditional
+if my_bmi < 18.5:
+    status = "Underweight"
+elif 18.5 <= my_bmi < 25:
+    status = "Normal weight"
+elif 25 <= my_bmi < 30:
+    status = "Overweight"
+else:
+    status = "Obese"
+
+print(f"BMI Status: {status}")
+
+# Dictionary
+person = {
+    "name": "Bruno",
+    "age": 25,
+    "city": "Kigali",
+    "skills": ["Python", "JavaScript", "PHP", "SQL"]
+}
+
+print("Skills:")
+for skill in person["skills"]:
+    print(f"• {skill}")`
   }
 };
 
-// Fill missing languages with minimal data
+// Fill missing languages with good teaching starters
 languages.forEach(lang => {
   if (!content[lang]) {
     content[lang] = {
-      title: lang.toUpperCase(),
-      text: `<p>Documentation for <b>${lang.toUpperCase()}</b> coming soon...</p><p>Start coding and ask BRU AI for help!</p>`,
-      starter: `// ${lang.toUpperCase()} example\nconsole.log("Hello ${lang}!");`,
-      quiz: []
+      title: lang.toUpperCase() + " Tutorial",
+      text: `
+<h2>${lang.toUpperCase()} Tutorial</h2>
+<p>${lang.toUpperCase()} is used for ${lang === 'sql' ? 'database management' : lang === 'php' ? 'server-side web development' : lang === 'java' ? 'enterprise applications' : 'various purposes'}. More detailed lessons coming soon.</p>
+<p>Start coding and use the BRU AI Assistant for explanations!</p>
+      `,
+      starter: lang === "sql" ? "-- SQL example\nSELECT * FROM users WHERE age > 18;" :
+               lang === "php" ? "<?php\necho \"Hello from PHP!\";\n?>" :
+               lang === "java" ? `public class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello Java!");\n  }\n}` :
+               `// ${lang.toUpperCase()} starter\nconsole.log("Hello from ${lang}!");`
     };
   }
 });
 
 let currentLang = "html";
-let isQuizMode = false;
+let pyodide = null;
 let isCompilerMode = false;
+
+// ────────────────────────────────────────────────
+// Load Pyodide lazily when Python is selected
+// ────────────────────────────────────────────────
+async function initPyodide() {
+  if (!pyodide) {
+    console.log("Loading Pyodide...");
+    pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" });
+    console.log("Pyodide loaded!");
+  }
+  return pyodide;
+}
 
 // ────────────────────────────────────────────────
 // Load language
@@ -444,7 +1529,7 @@ function loadLanguage(lang) {
   const data = content[lang];
 
   document.getElementById("lang-name").textContent = lang.toUpperCase();
-  document.getElementById("docs-content").innerHTML = `<h2>${data.title}</h2>${data.text}`;
+  document.getElementById("docs-content").innerHTML = data.text;
   document.getElementById("editor").value = data.starter;
 
   document.querySelectorAll(".lang-btn").forEach(b => {
@@ -452,15 +1537,14 @@ function loadLanguage(lang) {
   });
 
   document.getElementById("compiler-lang-name").textContent = lang.toUpperCase();
-  document.getElementById("quiz-lang-name").textContent = lang.toUpperCase();
 
   runCode();
 }
 
 // ────────────────────────────────────────────────
-// Run code – real for HTML/JS, simulated for others
+// Run code – real execution for supported languages
 // ────────────────────────────────────────────────
-function runCode() {
+async function runCode() {
   const code = document.getElementById("editor").value.trim();
   const preview = document.getElementById("preview");
   const consoleEl = document.getElementById("console");
@@ -474,7 +1558,11 @@ function runCode() {
     consoleEl.style.display = "none";
     const doc = preview.contentDocument || preview.contentWindow.document;
     doc.open();
-    doc.write(code);
+    if (currentLang === "css") {
+      doc.write(`<style>${code}</style><h1>Test Heading</h1><p>Test paragraph</p><button>Test Button</button>`);
+    } else {
+      doc.write(code);
+    }
     doc.close();
   } else if (currentLang === "javascript") {
     let output = "";
@@ -482,13 +1570,28 @@ function runCode() {
     console.log = (...args) => { output += args.map(a => String(a)).join(" ") + "\n"; };
     try {
       eval(code);
-      consoleEl.textContent = output || "Executed (no output)";
+      consoleEl.textContent = output || "Executed successfully (no output)";
     } catch (e) {
       consoleEl.textContent = "Error: " + e.message;
     }
     console.log = originalLog;
+  } else if (currentLang === "python") {
+    try {
+      const py = await initPyodide();
+      let output = "";
+      py.setStdout({ batched: (s) => output += s });
+      await py.runPythonAsync(code);
+      consoleEl.textContent = output || "Python executed successfully";
+    } catch (err) {
+      consoleEl.textContent = "Python Error: " + err.message;
+    }
   } else {
-    consoleEl.textContent = `// ${currentLang.toUpperCase()} simulation\n${code}\n\n→ Would run successfully in real environment\n→ Output depends on the code logic`;
+    consoleEl.textContent = `// ${currentLang.toUpperCase()} code preview (no full runtime in browser)
+${code}
+
+→ In a real environment this would:
+→ ${currentLang === "sql" ? "query a database table" : currentLang === "php" ? "generate dynamic HTML on a server" : currentLang === "java" ? "compile and run in JVM" : "execute in its native platform"}
+→ Output shown here is a preview only`;
   }
 }
 
@@ -506,7 +1609,11 @@ function runCompilerCode() {
     output.style.display = "none";
     const doc = preview.contentDocument;
     doc.open();
-    doc.write(code);
+    if (currentLang === "css") {
+      doc.write(`<style>${code}</style><h1>Test</h1><p>Sample text</p>`);
+    } else {
+      doc.write(code);
+    }
     doc.close();
   } else if (currentLang === "javascript") {
     let out = "";
@@ -515,18 +1622,23 @@ function runCompilerCode() {
     try { eval(code); output.textContent = out || "Done"; }
     catch (e) { output.textContent = "Error:\n" + e.message; }
     console.log = log;
+  } else if (currentLang === "python") {
+    initPyodide().then(py => {
+      let pyOut = "";
+      py.setStdout({ batched: s => pyOut += s });
+      py.runPythonAsync(code).then(() => output.textContent = pyOut || "Python executed");
+    }).catch(e => output.textContent += "Error loading Python: " + e.message);
   } else {
-    output.textContent = `${code}\n\n→ Simulated execution for ${currentLang.toUpperCase()}\n→ No real runtime in browser for this language`;
+    output.textContent = `${code}\n\n→ Simulated ${currentLang.toUpperCase()} execution`;
   }
 }
 
 // ────────────────────────────────────────────────
-// Compiler Mode
+// Compiler Mode toggle
 // ────────────────────────────────────────────────
 function toggleCompilerMode() {
   isCompilerMode = !isCompilerMode;
   document.getElementById("main-view").style.display = isCompilerMode ? "none" : "flex";
-  document.getElementById("quiz-pane").style.display = "none";
   document.getElementById("compiler-mode").style.display = isCompilerMode ? "flex" : "none";
   if (isCompilerMode) {
     document.getElementById("compiler-editor").value = document.getElementById("editor").value;
@@ -535,99 +1647,61 @@ function toggleCompilerMode() {
 }
 
 // ────────────────────────────────────────────────
-// Theme, Quiz, AI, Format, Auto-close
+// Theme toggle
 // ────────────────────────────────────────────────
 function toggleTheme() {
   document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark";
 }
 
-function toggleQuizMode() {
-  isQuizMode = !isQuizMode;
-  document.getElementById("main-view").style.display = isQuizMode ? "none" : "flex";
-  document.getElementById("compiler-mode").style.display = "none";
-  document.getElementById("quiz-pane").style.display = isQuizMode ? "flex" : "none";
-  if (isQuizMode) loadQuiz();
-}
-
-function loadQuiz() {
-  const qz = content[currentLang]?.quiz || [];
-  const container = document.getElementById("quiz-questions");
-  container.innerHTML = "";
-  if (qz.length === 0) {
-    container.innerHTML = "<p>No quiz available for this language yet.</p>";
-    return;
-  }
-  qz.forEach((item, i) => {
-    const div = document.createElement("div");
-    div.innerHTML = `<h4>${i+1}. ${item.q}</h4>`;
-    item.opts.forEach((opt, j) => {
-      const label = document.createElement("label");
-      label.style.display = "block";
-      label.style.padding = "8px";
-      label.style.border = "1px solid var(--border)";
-      label.style.margin = "4px 0";
-      label.style.cursor = "pointer";
-      label.style.borderRadius = "4px";
-      label.innerHTML = `<input type="radio" name="q${i}" value="${j}"> ${opt}`;
-      div.appendChild(label);
-    });
-    container.appendChild(div);
-  });
-}
-
-function checkQuizAnswers() {
-  const qz = content[currentLang]?.quiz || [];
-  let correct = 0;
-  qz.forEach((item, i) => {
-    const selected = document.querySelector(`input[name="q${i}"]:checked`);
-    if (selected && item.opts[parseInt(selected.value)] === item.a) correct++;
-  });
-  alert(`Score: ${correct} / ${qz.length}\nKeep learning!`);
-}
-
-function openAI()  { document.getElementById("ai-modal").style.display = "flex"; }
-function closeAI() { document.getElementById("ai-modal").style.display = "none"; }
-
+// ────────────────────────────────────────────────
+// Format code (improved indentation)
+// ────────────────────────────────────────────────
 function formatCode() {
   const ed = document.getElementById(isCompilerMode ? "compiler-editor" : "editor");
   let lines = ed.value.split("\n");
   let indent = 0;
   lines = lines.map(line => {
     let trimmed = line.trim();
-    if (trimmed.startsWith("}") || trimmed.startsWith("</")) indent = Math.max(0, indent - 2);
+    if (trimmed.startsWith("}") || trimmed.startsWith("</") || trimmed.startsWith("case") || trimmed.startsWith("default:")) {
+      indent = Math.max(0, indent - 2);
+    }
     let formatted = " ".repeat(indent) + trimmed;
-    if (trimmed.endsWith("{") || trimmed.endsWith("(") || trimmed.startsWith("<") && !trimmed.startsWith("</")) indent += 2;
+    if (trimmed.endsWith("{") || trimmed.endsWith("(") || trimmed.startsWith("<") && !trimmed.startsWith("</") && !trimmed.includes("/>")) {
+      indent += 2;
+    }
     return formatted;
   });
   ed.value = lines.join("\n");
 }
 
-// Auto close brackets & tags
+// ────────────────────────────────────────────────
+// Auto-complete: tabs, brackets, quotes, HTML tags
+// ────────────────────────────────────────────────
 function setupAutoComplete(id) {
   const el = document.getElementById(id);
   el.addEventListener("keydown", e => {
     if (e.key === "Tab") {
       e.preventDefault();
       const start = el.selectionStart;
-      el.value = el.value.substring(0,start) + "  " + el.value.substring(el.selectionEnd);
+      el.value = el.value.substring(0, start) + "  " + el.value.substring(el.selectionEnd);
       el.selectionStart = el.selectionEnd = start + 2;
     }
 
-    const pairs = { "(":")", "[":"]", "{":"}", '"':'"', "'":"'" };
+    const pairs = { "(": ")", "[": "]", "{": "}", '"': '"', "'": "'" };
     if (pairs[e.key]) {
       e.preventDefault();
       const start = el.selectionStart;
-      el.value = el.value.substring(0,start) + e.key + pairs[e.key] + el.value.substring(el.selectionEnd);
+      el.value = el.value.substring(0, start) + e.key + pairs[e.key] + el.value.substring(el.selectionEnd);
       el.selectionStart = el.selectionEnd = start + 1;
     }
 
     if (e.key === ">") {
       const start = el.selectionStart;
       const before = el.value.substring(0, start);
-      const tagMatch = before.match(/<([a-zA-Z][\w-]*)/);
+      const tagMatch = before.match(/<([a-zA-Z][\w:-]*)/);
       if (tagMatch && !before.endsWith("/>")) {
         const tag = tagMatch[1];
-        if (!before.endsWith(`</${tag}`)) {
+        if (!before.match(new RegExp(`</${tag}>$`))) {
           e.preventDefault();
           el.value = before + ">" + `</${tag}>` + el.value.substring(start);
           el.selectionStart = el.selectionEnd = start + 1;
@@ -637,33 +1711,44 @@ function setupAutoComplete(id) {
   });
 }
 
+// ────────────────────────────────────────────────
 // Resizer
+// ────────────────────────────────────────────────
 function makeResizable(id, leftId) {
   const resizer = document.getElementById(id);
   const left = document.getElementById(leftId);
-  let startX, startW;
   resizer.onmousedown = e => {
-    startX = e.clientX;
-    startW = left.offsetWidth;
-    document.onmousemove = e => {
-      left.style.width = (startW + e.clientX - startX) + "px";
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = left.offsetWidth;
+    const doDrag = e => left.style.width = (startW + e.clientX - startX) + "px";
+    const stopDrag = () => {
+      document.removeEventListener("mousemove", doDrag);
+      document.removeEventListener("mouseup", stopDrag);
     };
-    document.onmouseup = () => {
-      document.onmousemove = document.onmouseup = null;
-    };
+    document.addEventListener("mousemove", doDrag);
+    document.addEventListener("mouseup", stopDrag);
   };
 }
 
+// ────────────────────────────────────────────────
+// AI Modal
+// ────────────────────────────────────────────────
+function openAI() { document.getElementById("ai-modal").style.display = "flex"; }
+function closeAI() { document.getElementById("ai-modal").style.display = "none"; }
+
+// ────────────────────────────────────────────────
 // Init
+// ────────────────────────────────────────────────
 window.addEventListener("load", () => {
-  const btns = document.getElementById("lang-buttons");
+  const btnContainer = document.getElementById("lang-buttons");
   languages.forEach(lang => {
-    const b = document.createElement("button");
-    b.className = "lang-btn";
-    b.dataset.lang = lang;
-    b.textContent = lang.toUpperCase();
-    b.onclick = () => loadLanguage(lang);
-    btns.appendChild(b);
+    const btn = document.createElement("button");
+    btn.className = "lang-btn";
+    btn.dataset.lang = lang;
+    btn.textContent = lang.toUpperCase();
+    btn.onclick = () => loadLanguage(lang);
+    btnContainer.appendChild(btn);
   });
 
   loadLanguage("html");
