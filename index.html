@@ -705,6 +705,284 @@ This is future-proof 🔥
     text: `
 <p><b>CSS</b> controls how HTML looks: colors, sizes, positions, animations.</p>
 <h4>Selectors</h4>
+<pre><h4>🌟 HTML + CSS Beginner → Solid Level Notes
+1. HTML Basics (Structure of Web Pages)
+
+HTML = building blocks of a web page.
+
+It defines what is on the page, not how it looks.
+
+Think of it as:
+
+HTML → bricks and walls
+
+CSS → paint, furniture, decorations
+
+Basic structure of an HTML file:
+
+<!DOCTYPE html> → tells browser “this is HTML”
+
+<html> → root element, everything inside
+
+<head> → metadata, title, CSS links
+
+<body> → visible content
+
+Key tags to know at the start:
+
+Headings → <h1> … <h6>
+
+Paragraph → <p>
+
+Links → <a>
+
+Images → <img>
+
+Lists → <ul>, <ol>, <li>
+
+Div / Span → containers
+
+Semantic → <header>, <nav>, <main>, <footer>
+
+Tip: Learn one tag at a time, understand its purpose, then experiment.
+
+2. CSS Basics (How Websites Look)
+
+CSS = how your page looks
+
+Colors, fonts, size, spacing, layout
+
+Think: structure (HTML) + style (CSS) = readable, pretty webpage
+
+CSS Syntax:
+
+selector {
+   property: value;
+}
+
+
+Selector → what you are styling (tag, class, ID)
+
+Property → what you want to change (color, font-size)
+
+Value → what you want it to be (red, 20px)
+
+Example in words:
+
+“Make all paragraphs red and 20px font size.”
+
+3. Connecting CSS to HTML
+
+Inline → inside element (quick, messy)
+
+Internal → <style> inside <head> (good for single page)
+
+External → separate .css file linked in <head> (professional)
+
+Pro tip: Always aim for external CSS in real projects.
+
+4. Selectors (Choosing What to Style)
+
+Element selector → all <p> or <h1> tags
+
+Class selector → .menu → elements with class “menu”
+
+ID selector → #main → unique element with id “main”
+
+Grouping → h1, h2, p → same style for multiple
+
+Descendant/Child → div p / div > p → nested styling
+
+Pseudo-class → hover, focus, first-child
+
+Pseudo-element → first-letter, before, after
+
+Tip: Learn selectors slowly. They are the power tools of CSS.
+
+5. The Box Model (Most Important Concept)
+
+Every HTML element = box
+
+Layers:
+
+Content → text/image
+
+Padding → space inside the box
+
+Border → edge of box
+
+Margin → space outside the box
+
+Why it matters:
+
+Padding makes content readable
+
+Margin separates elements
+
+Border adds style
+
+Practice idea:
+
+Create a paragraph, give it padding, margin, border → see how spacing changes
+
+6. Colors & Text
+
+Color names → red, blue, green
+
+Hex → #ff0000
+
+RGB → rgb(255,0,0)
+
+RGBA → adds transparency
+
+Text styling:
+
+Font-family → Arial, sans-serif
+
+Font-size → px, em, rem
+
+Font-weight → normal, bold
+
+Font-style → italic, oblique
+
+Text-align → left, center, right, justify
+
+Line-height → spacing between lines
+
+Letter-spacing → spacing between letters
+
+Practice idea:
+
+Try making a heading 40px, bold, italic, blue, centered
+
+Experiment with line-height and letter-spacing
+
+7. Lists
+
+Types:
+
+Unordered → bullets
+
+Ordered → numbers
+
+Nested → list inside list
+
+Tips:
+
+Lists are everywhere → menus, steps, rules
+
+Can style bullets → circle, square, disc
+
+8. Links & Images
+
+Links → <a href="url">text</a>
+
+Pseudo-classes: hover, visited, active
+
+Images → <img src="url" alt="description">
+
+Style width, height, border-radius, shadow
+
+Tip: Always use alt text for accessibility
+
+9. Layout (Block, Inline, Flex, Grid)
+
+Block → takes full width
+
+Inline → only takes space it needs
+
+Inline-block → inline but can set width/height
+
+Flex → easy row/column alignment
+
+Grid → 2D layout
+
+Practice:
+
+Make a small navigation bar with flexbox
+
+Make a 3-column card layout with grid
+
+10. Forms & Inputs
+
+Input types → text, password, number, email, checkbox, radio
+
+Labels → link input for accessibility
+
+Buttons → submit, reset, click
+
+CSS tips:
+
+Add padding inside input
+
+Style border & background
+
+Use hover/focus for better UI
+
+11. Pseudo-classes & Pseudo-elements
+
+Pseudo-class → special states → :hover, :focus
+
+Pseudo-element → style part of element → ::first-letter, ::before, ::after
+
+Example in words:
+
+Change color of a link when mouse is over it → hover
+Make the first letter of paragraph bigger → first-letter
+
+12. Units & Responsive Design
+
+px → fixed size
+
+% → relative to parent
+
+em/rem → relative to font size
+
+vw/vh → viewport width/height
+
+Tip: Start thinking responsive from day one → avoid fixed px everywhere
+
+13. Margins, Padding, Borders Recap
+
+Padding → space inside → makes text readable
+
+Margin → space outside → separates elements
+
+Border → style & color → edge decoration
+
+Tip: Combine with box-sizing for easier sizing
+
+14. Common Beginner Mistakes
+
+Forget semicolons
+
+Confusing padding vs margin
+
+Inline styles → messy
+
+Not using semantic tags
+
+Using px everywhere → hard for mobile
+
+15. Practice Exercises (Step by Step)
+
+Create a heading → style color, font, size, alignment
+
+Add a paragraph → give padding, border, margin
+
+Make an unordered list → style bullets
+
+Add a link → style hover and visited
+
+Add an image → style width, border-radius, shadow
+
+Make a button → add padding, background color, hover effect
+
+Build a 3-card layout → use flexbox or grid
+
+Build a simple form → style inputs and button
+
+Tip: Always type yourself, experiment, and refresh the page to see results</h4></pre>
 <ul>
   <li>Element: <code>p { color: blue; }</code></li>
   <li>Class: <code>.box { }</code></li>
